@@ -10,7 +10,7 @@ baseurl: ''
 # The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
 # If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
 # otherwise, the layout language will use the default value of 'en'.
-lang: en
+lang: ko
 
 
 # Change to your timezone › http://www.timezoneconverter.com/cgi-bin/findzone/findzone
@@ -21,10 +21,10 @@ timezone: Asia/Seoul
 
 title: 기몬식                          # the main title
 
-tagline: 기록하고 싶은 것들을 기록합니다.   # it will display as the sub-title
+tagline: 소나기를 피하려고 오두막에 숨었더니, 아! 태풍일 줄이야!   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  기록하고 싶은 것들을 기록합니다.
+  소나기를 피하려고 오두막에 숨었더니, 아! 태풍일 줄이야!
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://ones1kk.github.io'
@@ -42,8 +42,8 @@ social:
   email: ones1k95@gmail.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username      # change to your twitter homepage
     - https://github.com/ones1kk       # change to your github homepage
+    - https://twitter.com/username      # change to your twitter homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     # - https://www.linkedin.com/in/username
