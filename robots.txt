@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ones1kk.github.io/sitemap.xml
