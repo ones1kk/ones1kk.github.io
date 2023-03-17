@@ -55,7 +55,14 @@ repositories {
 
 ### 그럼 단지 저 ***dependencies block과 repsoitories block***만 지정 해주면 프로젝트 의존성을 설정 할 수 있을까요??🤔
 
-정답은 아닙니다. [The Java Plugin 공식 문서](https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin)에서 내용을 확인해 보면 이렇게 적혀져 있습니다.
+정답은 아닙니다.   
+```groovy
+plugins {
+    id "java"
+}
+ ``` 
+이와 같이 명시적으로 Java Plugin을 사용한다고 .gradle 파일에 설정을 해야합니다.  
+추가로 [The Java Plugin 공식 문서](https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin)에서 내용을 확인해 보면 이렇게 적혀져 있습니다.
 > The Java plugin adds Java compilation along with testing and bundling capabilities to a project. It serves as the basis for many of the other JVM language Gradle plugins...(이하 생략)
 
 
