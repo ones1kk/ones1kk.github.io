@@ -5,21 +5,21 @@ categories: [Gradle]
 tags: [gradle]
 ---
 
-### 최근 멀티 모듈 프로젝트 환경을 구성하면서 겪었던 trouble이 몇가지 있었습니다.
-그 중 Gradle에서 제공하는 Dependency 관련된 trouble이 있었는데, 해당 프로젝트는 각 Layer, feature 별로 서브 모듈들을 가지고 있고 모듈에서 필요한 모듈의 의존성을 주입 받아 사용하는 환경이였습니다.   
-이 시점에서, 모듈간 의존성을 설정하며 겪은 Trouble의 케이스를 적어 보면 아래와 같습니다.
+### 최근 멀티 모듈 프로젝트 환경을 구성하면서 겪었던 trouble이 몇 가지 있었습니다.
+그 중 Gradle에서 제공하는 Dependency 관련된 trouble이 있었는데, 해당 프로젝트는 각 Layer, feature 별로 서브 모듈들을 가지고 있고 모듈에서 필요한 모듈의 의존성을 주입 받아 사용하는 환경이었습니다.   
+이 시점에서, 모듈 간 의존성을 설정하며 겪은 Trouble의 케이스를 적어 보면 아래와 같습니다.
 1. 코드 작성 시점에서 문제 없이 하위 모듈의 소스들을 가져와 작성은 되나 Runetime 시점에서는 NotFoundClassException이 발생한다.
 2. 코드 작성 시점에서 실제 해당 모듈 클래스를 import 해오나 해당 클래스가 의존하고 있는 다른 class의 정보를 가져 오지 못한다.  
    ...(이하 생략)
 
 
-또 각 서브 모듈의 의존 관계를 나타내는 다이어그램에서는 의도한대로 서로 주입을 받고 있어서 문제가 없는 것 처럼 보였습니다.
+또 각 서브 모듈의 의존 관계를 나타내는 다이어그램에서는 의도한 대로 서로 주입 받고 있어서 문제가 없는 것처럼 보였습니다.
 
 
 사실 처음 구성해보는 멀티 모듈 환경이라 정확한 원인을 파악하기 어려웠고, 저의 주변 상황도 마찬가지였습니다.  
-(Maven에서 제공해주는 ```<scope>``` 태그처럼 Gradle도 분명히 있을 것이라고 추측은 했으나, 키워드나 function을 찾지 못한 상황이였습니다😭)
+(Maven에서 제공해주는 ```<scope>``` 태그처럼 Gradle도 분명히 있을 것이라고 추측은 했으나, 키워드나 function을 찾지 못한 상황이살습니다😭)
 
-결국 Gradle에서 제공해주는 [공식 문서](https://docs.gradle.org/current/userguide/what_is_gradle.html)를 처음부터 천천히 살펴 보기로 했습니다.  
+결국 Gradle에서 제공해주는 [공식 문서](https://docs.gradle.org/current/userguide/what_is_gradle.html)를 처음부터 천천히 살펴보기로 했습니다.  
 그 중 [The Java Library Plugin](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph) 페이지에서 원하는 내용을 확인 할 수 있었습니다.
 ### 제가 이해한 개념을 요약 & 정리하여 적자면 아래와 같습니다.
 
@@ -100,7 +100,7 @@ Java Plugin은 위와 같이 특징 및 강력한 이점들이 있습니다.
 
 ### 이제 이정도면 어느 정도 ```Gradle```에서 의존성 구성을 어떤 식으로 처리하는지 알게 되었습니다.
 
-그럼 이제 ``` spring-data-jpa를 ``` ``` implementation``` 받고 있는 ``` domain-module ```을 의존성 주입 받아 사용해 보곘습니다. 아래와 같이 말이죠.
+그럼 이제 ``` spring-data-jpa를 ``` ``` implementation``` 받고있는 ``` domain-module ```을 의존성 주입 받아 사용해 보곘습니다. 아래와 같이 말이죠.
 ``` groovy 
 * another-module > build.gradle
 dependencies {
@@ -115,17 +115,17 @@ dependencies {
 
 많은 시행 착오를 겪으면서 결국 해결한 것이 서두에 작성한 [The Java Library Plugin](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph) 페이지를 통해서 입니다.
 
-결국 문제는 Java Plugin의 문제 였습니다. 아래 사진을 같이 보시죠.  
+결국 문제는 Java Plugin의 문제였습니다. 아래 사진을 같이 보시죠.  
 ![java-library-ignore-deprecated-main.png](/assets/img/gradle/java-library-ignore-deprecated-main.png)
 > java-library-ignore-deprecated-main  
 [출처](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph)
 
-Java Plugin에서 표현한 다이어그램과는 다른 박스가 하나 추가 되었습니다. 핑크색 박스는 어떤 의미일까요?
+Java Plugin에서 표현한 다이어그램과는 다른 박스가 하나 추가되었습니다. 핑크색 박스는 어떤 의미일까요?
 > 분홍색 박스: 구성 요소가 컴파일되거나 라이브러리에 대해 실행될 떄 사용되는 구성  
 apiElements: 라이브러리에 대해 컴파일하는데 필요한 모든 요소를 검색하기 위한 요소들  
 runtimeElements: 라이브러리에 대해 실행하는 데 필요한 모든 요소를 ​​검색하기 위한 요소들
 
-``` domain-module은 another-module```에서 DB 접근 및 handling과 관련 된 로직을 수행하는 모듈입니다. 마치 라이브러리 처럼 말이죠.  
+``` domain-module은 another-module```에서 DB 접근 및 handling과 관련된 로직을 수행하는 모듈입니다. 마치 라이브러리처럼 말이죠.  
 ``` another-module```은 ```spring-data-jpa```에 대한 의존성을 주입 받지 않은 상태입니다. 해당 의존성에 대해서 아무런 정보도 가지고 있지 않은 상태이고, ```spring-data-jpa```에 대한 의존성은 오직 ``` domain-module ```만 가지고 있는 상태입니다.
 
 그렇기 때문에 ``` another-module ```은 ``` domain-module ```에서 의존 받고 있는 ```spring-data-jpa```의 elements까지 가져와야 하는 상황입니다.  
@@ -143,12 +143,12 @@ plugins {
     id "java" -> id "java-library"
 }
  ```
-> plugins block은 맨위에 작성하는 것이 관례적입니다.  
-만일 맨위가 아닌 특정 위치에 작성하게 된다면 최소한 각 plugin이 제공하는 block 위에 해당 plugins block이 먼저 작성되어야 합니다.
+> plugins block은 맨 위에 작성하는 것이 관례적입니다.  
+만일 맨 위가 아닌 특정 위치에 작성하게 된다면 최소한 각 plugin이 제공하는 block 위에 해당 plugins block이 먼저 작성되어야 합니다.
 
 변경 후, Gradle를 새로 고침하면 정상적으로 의존성을 끌고 옵니다!!🥳
 
-### 이것으로 제가 겪었던 trouble에 대한 shooting이 완료 되었습니다.
+### 이것으로 제가 겪었던 trouble에 대한 shooting이 완료되었습니다.
 
 > 추가로 개인적인 생각이지만 org.springframework.boot:spring-boot-starter-*** 관련 의존성을 주입 받을 때 아래 케이스들은 org.springframework.boot:spring-boot-starter-***.jar자체에 해당 외부 라이버리를 이미 jar로 갖고 있기 때문인 것 같습니다???
 > 1. 스프링 내부에서 사용하는 외부 라이브러리(ex: jackson)에 대한 의존성 관리 및 버전 관리를 명시적으로 해주지 않아도 되는 부분
