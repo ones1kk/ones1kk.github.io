@@ -1,6 +1,6 @@
 ---
-title: Java Plugin & Java Library Plugin
-date: 2023-03-16 23:13:10 +09:00
+title: Jaypt Spring Boot 라이브러리
+date: 2023-03-20 00:28:10 +09:00
 categories: [Spring, Library]
 tags: [library, spring-boot-library, java-library]
 ---
