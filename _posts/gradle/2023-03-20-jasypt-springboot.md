@@ -5,7 +5,7 @@ categories: [Spring, Library]
 tags: [library, spring-boot-library, java-library]
 ---
 
-Git 저장소(ex: GitGub, GitLab, Bitbucket...)를 통해서 코드를 관리할 때, private repository인 경우는 해당없지만, public repository로 관리하다 보면 민감한 정보에 대한 처리는 필수적입니다.
+Git 저장소(ex: GitHub, GitLab, Bitbucket...)를 통해서 코드를 관리할 때, private repository인 경우는 해당없지만, public repository로 관리하다 보면 민감한 정보에 대한 처리는 필수적입니다.  
 소스 코드에는 DB URL, Principal, Credential, Token Secret Key ... 등등 많은 민감한 정보를 담고 있기 때문입니다.
 
 이를 위해 .gitignore file을 통해 Git 버전 관리에서 제외할 파일 목록을 지정 할 수 있지만,
@@ -41,7 +41,7 @@ dependencies {
 ### Jasypt Encryptor가 사용할 Password를 생성해야 합니다.
 [Jasypt Online Encryption and Decryption(Free)](https://www.devglan.com/online-tools/jasypt-online-encryption-decryption) 사이트를 통해서 Two way Encryption Password를 생성할 수 있습니다.
 
-### Configration class를 만든 후 작성해야 합니다.
+### Configration class를 작성해야 합니다.
 
 ```java 
 @Configuration
@@ -81,7 +81,7 @@ public class JasyptConfig {
 ### 2번째 스텝에서 만든 password가 ```SimpleStringPBEConfig```의 비밀번호로 사용됩니다.
 여기서 시스템 환경 변수를 통해서 password를 주입을 받는 이유는 뒤에 설명하겠습니다.
 
-> 그 후 Properties를 암호화합니다.
+### 그 후 Properties를 암호화합니다.
 
 ```java
 class JasyptConfigTest {
@@ -145,11 +145,11 @@ class JasyptConfigTest {
 ```
 > 다만 정상적인 실행을 위해서, ```Run/Debug Configurations ```에서 해당 테스트 클래스에 vm option ``` -Djasypt.encryptor.password=${생성한 password}```를 추가한 후 실행해야합니다.
 
-위의 방법과 같이 암호화가 완료되면, console 창에 이렇게 출력이 됩니다.  
+위의 방법과 같이 암호화가 완료되면, console 창에 아래와 같이 출력이 됩니다.  
 ![output-of-encrypted](/assets/img/spring/library/result-of-encrypted.png)
 
 > 저는 위와 같은 방식으로 진행했는데, 더 좋은 방법이 있으면 알려주십시오❗️❗️❗️  
-해당 테스트 코드를 실행하면 암.복호화가 정상적으로 되는지 확인할 수 있고, 암호화된 값이 console창에 print됩니다.
+해당 테스트 코드를 실행하면 암.복호화가 정상적으로 동작하는지 확인할 수 있고, 암호화된 값이 console창에 print됩니다.
 
 ### 암호화가 된 값을 기존 Raw Application Properties 값에 대체해줍니다.
 
@@ -162,7 +162,7 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  (후)
+(후)
 spring:
   datasource:
     url: ENC(암호화된 값)
