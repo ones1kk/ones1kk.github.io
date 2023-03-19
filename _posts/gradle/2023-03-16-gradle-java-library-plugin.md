@@ -17,7 +17,7 @@ tags: [gradle]
 
 
 사실 처음 구성해보는 멀티 모듈 환경이라 정확한 원인을 파악하기 어려웠고, 저의 주변 상황도 마찬가지였습니다.  
-(Maven에서 제공해주는 ```<scope>``` 태그처럼 Gradle도 분명히 있을 것이라고 추측은 했으나, 키워드나 function을 찾지 못한 상황이살습니다😭)
+(Maven에서 제공해주는 ```<scope>``` 태그처럼 Gradle도 분명히 있을 것이라고 추측은 했으나, 키워드나 function을 찾지 못한 상황이었습니다😭)
 
 결국 Gradle에서 제공해주는 [공식 문서](https://docs.gradle.org/current/userguide/what_is_gradle.html)를 처음부터 천천히 살펴보기로 했습니다.  
 그 중 [The Java Library Plugin](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph) 페이지에서 원하는 내용을 확인 할 수 있었습니다.
@@ -55,7 +55,7 @@ repositories {
 
 ### 그럼 단지 저 ***dependencies block과 repsoitories block***만 지정 해주면 프로젝트 의존성을 설정 할 수 있을까요??🤔
 
-정답은 아닙니다.   
+정답은 아닙니다.
 ```groovy
 plugins {
     id "java"
@@ -127,6 +127,10 @@ dependencies {
 > java-library-ignore-deprecated-main  
 [출처](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph)
 
+![java-library-ignore-deprecated-test](/assets/img/gradle/java-library-ignore-deprecated-test.png)
+> java-library-ignore-deprecated-test  
+[출처](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph)
+
 Java Plugin에서 표현한 다이어그램과는 다른 박스가 하나 추가되었습니다. 핑크색 박스는 어떤 의미일까요?
 > 분홍색 박스: 구성 요소가 컴파일되거나 라이브러리에 대해 실행될 떄 사용되는 구성  
 apiElements: 라이브러리에 대해 컴파일하는데 필요한 모든 요소를 검색하기 위한 요소들  
@@ -159,8 +163,26 @@ plugins {
 
 > 추가로 개인적인 생각이지만 org.springframework.boot:spring-boot-starter-*** 관련 의존성을 주입 받을 때 아래 케이스들은 org.springframework.boot:spring-boot-starter-***.jar자체에 해당 외부 라이버리를 이미 jar로 갖고 있기 때문인 것 같습니다???
 > 1. 스프링 내부에서 사용하는 외부 라이브러리(ex: jackson)에 대한 의존성 관리 및 버전 관리를 명시적으로 해주지 않아도 되는 부분
-> 2. implementation 키워드를 사용해도 외부 라이버러리의 elements들이 정상적으로 주입 되는 부분  
+> 2. implementation 키워드를 사용해도 외부 라이브러리의 elements들이 정상적으로 주입 되는 부분  
      ![spring-boot-start-web-internal](/assets/img/gradle/spring-boot-start-web-internal.png)
+
+추가로 Gralde 공식 문서에는 아래와 같은 가이드를 두고 ``` api, implementation ``` 사용을 권장하기 때문에 확인하고 사용하시면 좀 더 유용합니다.
+
+> Prefer the implementation configuration over api when possible.
+
+#### implementation
+1. 타입이 메소드 바디 안에서만 쓰이는 경우
+2. 타입이 private 맴버(변수/메소드 등등)에서만 쓰이는 경우
+3. 타입이 인터널 클래스에서만 쓰이는 경우
+
+#### api
+1. 타입이 인터페이스나 슈퍼 클래스에서 쓰이는 경우
+2. 타입이 public/protected/package/private 메소드의 파라미터(메소드의 인자, 반환 타입 및 타입 파라미터)에서 쓰일 때
+3. 타입이 pulbic 필드에서 쓰일 때
+4. public 어노테이션 타입일 때
+
+> 또한 api, implementation 키워드들은 위에 사진에서 봐왔던 것과 같이 compileClassPath, runtimeClassPath, testCompileClassPath, testRuntimeClassPath를 전부 포함하기 때문에 의존성 충돌로 인한 문제가 발생할 수 있습니다.   
+그렇기 때문에 최대한 의존성을 줄여서 설계하고 관리하는 것이 중요하곘습니다!!
 
 
 ## 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
