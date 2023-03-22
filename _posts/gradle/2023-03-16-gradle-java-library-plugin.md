@@ -178,11 +178,11 @@ plugins {
 #### api
 1. 타입이 인터페이스나 슈퍼 클래스에서 쓰이는 경우
 2. 타입이 public/protected/package/private 메소드의 파라미터(메소드의 인자, 반환 타입 및 타입 파라미터)에서 쓰일 때
-3. 타입이 pulbic 필드에서 쓰일 때
+3. 타입이 public 필드에서 쓰일 때
 4. public 어노테이션 타입일 때
 
 > 또한 api, implementation 키워드들은 위에 사진에서 봐왔던 것과 같이 compileClassPath, runtimeClassPath, testCompileClassPath, testRuntimeClassPath를 전부 포함하기 때문에 의존성 충돌로 인한 문제가 발생할 수 있습니다.   
 그렇기 때문에 최대한 의존성을 줄여서 설계하고 관리하는 것이 중요하곘습니다!!
 
 
-## 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
+오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
