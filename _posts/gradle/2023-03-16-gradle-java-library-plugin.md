@@ -159,7 +159,7 @@ plugins {
 
 변경 후, Gradle를 새로 고침하면 정상적으로 의존성을 끌고 옵니다!!🥳
 
-### 이것으로 제가 겪었던 trouble에 대한 shooting이 완료되었습니다.
+### 이것으로 제가 겪었던 trouble에 대한 정리를 마치겠습니다.
 
 > 추가로 개인적인 생각이지만 org.springframework.boot:spring-boot-starter-*** 관련 의존성을 주입 받을 때 아래 케이스들은 org.springframework.boot:spring-boot-starter-***.jar자체에 해당 외부 라이버리를 이미 jar로 갖고 있기 때문인 것 같습니다???
 > 1. 스프링 내부에서 사용하는 외부 라이브러리(ex: jackson)에 대한 의존성 관리 및 버전 관리를 명시적으로 해주지 않아도 되는 부분
