@@ -251,11 +251,12 @@ jobs:
         run: echo ${{ secrets.JASYPT_PASSWORD }} > password.txt
 
       - name: Build gradle
-        run: ./gradlew build -P=prd-Djasypt.encryptor.password=dw1BeYFtDajRaKBg1z46WWmtf1iWDwHc
+        run: ./gradlew build -P=prd-Djasypt.encryptor.password=${{ secrets.JASYPT_PASSWORD }}
 ```
-> 코드 블럭 ```Create file with content ``` 부분에서 Github Secrets 사용 부분이 안 보입니다...😓   
-> run: echo ${{ secrets.JASYPT_PASSWORD }} > password.txt  이렇게 사용하시면 됩니다!   
-> 
+> 코드 블럭 ```Create file with content, Build gradle ``` 부분에서 Github Secrets 사용 부분이 안 보입니다...😓  
+> ![github-secrets-syntax](/assets/img/spring/library/github-secrets-syntax.png)  
+ 
+ 
 build를 실행하기 전에, remote repository에 없는 password.txt를 생성하여 빌드를 진행하게 됩니다.
 
 ### jasypt.encryptor.password를 환경 변수로 받는 이유
