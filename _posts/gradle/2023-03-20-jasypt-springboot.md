@@ -151,7 +151,7 @@ class JasyptConfigTest {
 > 저는 위와 같은 방식으로 진행했는데, 더 좋은 방법이 있으면 알려주십시오❗️❗️❗️  
 해당 테스트 코드를 실행하면 암.복호화가 정상적으로 동작하는지 확인할 수 있고, 암호화된 값이 console창에 print됩니다.
 
-### 암호화가 된 값을 기존 Raw Application Properties 값에 대체해줍니다.
+### 암호화가 된 값을 기존 Application Properties 값에 대체해줍니다.
 
 ```yml
 (전)
@@ -162,7 +162,7 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  (후)
+(후)
 spring:
   datasource:
     url: ENC(암호화된 값)
