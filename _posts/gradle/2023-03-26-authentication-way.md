@@ -5,8 +5,6 @@ categories: [Web]
 tags: [jwt, session, cookie, httpSession, spring-framework]
 ---
 
-### JWT(JSON Web Token) & Cookie & Session
-
 ### 들어가기에 앞서
 서버에서 보안, 인증, 권한 부여 등을 확인하고 관리하는 방식은 대표적으로 ***쿠키, 세션, 토큰 3가지***가 있습니다.  
 이 글에서는 3가지 방식(토큰은 JWT 기반)에 대해서 알아보고자 합니다.  
@@ -117,6 +115,33 @@ REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요�
 > [출처](https://dev.to/thecodearcher/what-really-is-the-difference-between-session-and-token-based-authentication-2o39)
 
 #### Spring Framework에서의 Session
+
+![HttpSession](/assets/img/web/auth/HttpSession.png)
+
+Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용자의 세션과 관련된 데이터를 저장하고 처리합니다.   
+``` HttpSession ```은 퍼사드 패턴(Facade Pattern)을 통해 ``` StandardSessionFacade > StandardSession ```로 이어지는 기본 구현체를 가지고 있습니다.
+
+> 퍼사드 패턴(Facade Pattern)이란?  
+> 먼저 퍼사드(Facade)는 프랑스어 Façade 에서 유래된 단어로 건물의 '외관'이라는 뜻입니다.  
+> 서브 시스템(내부 구조)에 있는 인터페이스들에 대한 통합된 인터페이스(외벽)를 제공하는 패턴입니다.  
+> 이로써 내부 시스템의 복잡도를 감추기 위해 복잡한 기능을 감싸고 상호 작용할 더 단순한 메소드를 제공하는 계층을 생성하고 서브시스템과 상호 작용 복잡도를 낮추는데 의미가 있습니다.
+
+최초에 ``` HttpSession ``` 객체를 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 ``` StandardSessionFacade ```에 ``` StandardSession ```를 주입하게 됩니다.
+
+![HttpSession-created](/assets/img/web/auth/HttpSession-created.png)
+
+사실 ``` HttpSession.getSession() ``` 이전에 많은 일이 발생을 합니다.  
+간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 ***세션 생성 및 Validation***이 이루어 집니다.
+
+![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
+
+> org.apache.catalina.connector.Request.doGetSession()  
+> 세션을 생성하고, 생성한 세션의 JSESSIONID를 Response에 쿠키를 추가합니다.
+
+![ManagerBase-createSession](/assets/img/web/auth/ManagerBase-createSession.png)
+
+> org.apache.catalina.session.ManagerBase.createSession(sessionId)  
+> MaxActiveSession 갯수를 validation하고, 최초 세션 생성 시(createEmptySession) 세션의 정보(세션 생성 시간, 세션 아이디, 세션 유효 시간 등...)을 설정합니다.
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
 
