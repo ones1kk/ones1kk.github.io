@@ -126,22 +126,25 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 > 서브 시스템(내부 구조)에 있는 인터페이스들에 대한 통합된 인터페이스(외벽)를 제공하는 패턴입니다.  
 > 이로써 내부 시스템의 복잡도를 감추기 위해 복잡한 기능을 감싸고 상호 작용할 더 단순한 메소드를 제공하는 계층을 생성하고 서브시스템과 상호 작용 복잡도를 낮추는데 의미가 있습니다.
 
-최초에 ``` HttpSession ``` 객체를 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 ``` StandardSessionFacade ```에 ``` StandardSession ```를 주입하게 됩니다.
+최초에 ``` HttpSession ``` 을 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 ``` StandardSession ```를 주입받는 ``` StandardSessionFacade ```를 통해 관리하게 됩니다.
 
 ![HttpSession-created](/assets/img/web/auth/HttpSession-created.png)
 
-사실 ``` HttpSession.getSession() ``` 이전에 많은 일이 발생을 합니다.  
+사실 ``` HttpSession.getSession() ``` 을 통해 HttpSession을 생성하기 이전에 많은 일들이 발생합니다.  
 간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 ***세션 생성 및 Validation***이 이루어 집니다.
 
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
 > org.apache.catalina.connector.Request.doGetSession()  
-> 세션을 생성하고, 생성한 세션의 JSESSIONID를 Response에 쿠키를 추가합니다.
+> 세션을 생성하고, 생성한 세션 아이디를 JSESSIONID: 세션 아이디 value Response 쿠키에 추가합니다.
 
 ![ManagerBase-createSession](/assets/img/web/auth/ManagerBase-createSession.png)
 
 > org.apache.catalina.session.ManagerBase.createSession(sessionId)  
-> MaxActiveSession 갯수를 validation하고, 최초 세션 생성 시(createEmptySession) 세션의 정보(세션 생성 시간, 세션 아이디, 세션 유효 시간 등...)을 설정합니다.
+> MaxActiveSession 갯수를 validation 하고, 최초 세션 생성 시(createEmptySession) 세션의 정보(세션 생성 시간, 세션 아이디, 세션 유효 시간 등...)을 설정합니다.
+
+간략하게나마 HttpSession 객체가 어떻게 생성되는지 확인 했습니다.  
+다음은 HttpSession이 제공하는 대표적인 method ``` setAttribute(), getAttribute(), invalidate() ``` 를 통해서, HttpSession 객체는 어떤 식으로 세션을 관리하는지 알아보겠습니다.  
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
 
