@@ -5,24 +5,24 @@ categories: [Web]
 tags: [jwt, session, cookie, httpSession, spring-framework]
 ---
 
-### 들어가기에 앞서
+# 들어가기에 앞서
 서버에서 보안, 인증, 권한 부여 등을 확인하고 관리하는 방식은 대표적으로 ***쿠키, 세션, 토큰 3가지***가 있습니다.  
 이 글에서는 3가지 방식(토큰은 JWT 기반)에 대해서 알아보고자 합니다.  
 추가로 Spring Framework 환경에서는 어떤 방식으로 세션을 처리하는지 간단한 예제와 설명도 함께 작성하도록 하겠습니다.
 
-### JWT(JSON Web Token)
+# JWT(JSON Web Token)
 
-#### 역사
+## 역사
 JWT는 JSON Web Token의 줄임말로 일반적으로 웹 애플리케이션에서 인증 및 권한 부여 목적으로 사용되는 표준입니다.  
 XML을 이용하여 인터넷을 통해 데이터를 전송하던 2000년대 초반 때, 웹 애플리케이션이 점점 가볍고 이동성이 높은 JSON 데이터 전송 방식을 선호하게 되는 시점과 함께 JWT는 JSON 형식으로 데이터를 안전하게 전송하기 위한 수단으로 개발 되었습니다.
 
-#### 배경
+## 배경
 웹 애플리케이션이 더욱 복잡해지고 여러 사용자가 이용함에 따라 안전하고 명백한 방식으로 웹 애플리케이션을 처리할 필요성이 대두 되었습니다.  
 또한 이전에는 서버가 세션 기반 인증으로 사용하는 것이 일반적이었지만, 이 방법은 확장성, 상태 관리에 어려움을 겪는 문제가 있었습니다.  
 JWT는 상태 비저장, 확장성 및 다양한 플랫폼에서 사용할 수 있는 장점을 필두로 클라이언트에게 토큰을 발급합니다.  
 토큰을 발급 받은 클라이언트는 토큰 자체에 포함된 권한 정보나 서비스를 사용하기 위한 정보(Self-contained)를 이용하기 때문에 따로 서버에 데이터를 저장할 필요 없이 서버에 대한 향후 요청을 할 수 있게 되었습니다.
 
-#### 특징
+## 특징
 JWT는 Header, Payload, Signature 이렇게 3개의 부분으로 구성되어 있습니다.
 
 각 부분에 대해서 간략하게 설명하자면
@@ -58,7 +58,7 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 
 위 그림에서 눈 여겨 볼 점은 OAuth와 같은 단순 암호화된 문자열을 들고 있는 방식과 달리, 클라이언트에게 전달 받은 토큰의 내용을 서버 사이드에서 저장 & 관리할 필요 없이 Self-contained한 내용(아이디, 인가 정보 등)을 확인하고 이에 따라 응답만하게 됩니다.
 
-#### 장점
+## 장점
 
 1. 보안(Security): JWT는 토큰의 변조를 탐지할 수 있는 서명으로 안전하도록 설계되었습니다.  
    서명은 서버에만 알려진 키를 사용하여 생성되므로 서버만이 토큰을 발급하고 확인할 수 있습니다.
@@ -70,7 +70,7 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 REST API Server를 Stateless하게 설계하게 되면 얻게 되는 몇 가지 장점이 있습니다.  
 어떤 이유로 Stateless로 서버를 설계하는지, JWT는 어떤 점이 부합하는지 알아 보도록 하겠습니다.
 
-#### REST API 서버를 Stateless로 설계해야 하는 이유
+## REST API 서버를 Stateless로 설계해야 하는 이유
 1. Scalability(확장성): Stateless 서버는 각 요청에 요청을 처리하는 데 필요한 모든 정보가 들어 있으므로 요청은 서버 간에 세션 상태를 동기화할 필요 없이 여러 서버에 분산될 수 있습니다.
 2. Reliability(신뢰성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 안정적입니다. 관리할 세션 상태가 없기 때문에 버그나 오류가 발생할 가능성이 적습니다.
 3. Simplicity(단순성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 설계 및 구현이 간단합니다. 세션 상태에 의존하지 않음으로써 서버 로직을 단순화하여 보다 간단하고 유지관리 가능한 코드베이스로 이어질 수 있습니다.
@@ -78,16 +78,16 @@ REST API Server를 Stateless하게 설계하게 되면 얻게 되는 몇 가지 
 
 > 요약하면 REST API 서버를 상태 비저장으로 설계하면 향상된 확장성, 안정성, 단순성 및 캐싱을 포함한 몇 가지 이점을 제공합니다. 각 요청을 독립적으로 처리함으로써 서버는 요청을 보다 효율적으로 처리하도록 설계되어 응답성과 신뢰성이 높은 웹 서비스로 이어질 수 있습니다.
 
-#### 단점
+## 단점
 
 1. Cookie, Session과는 다르게 base64 인코딩을 통한 정보를 전달하므로 전송 데이터 양으로 인한 부하가 생길 수 있습니다.
 2. payload는 암호화가 되어있지 않기 때문에 민감한 정보를 저장할 수 없습니다.
 3. 토큰이 탈취 당한다면 토큰이 만료될 때까지 대처가 불가능합니다.
 
 
-### 세션(Session)
+# 세션(Session)
 
-#### 배경
+## 배경
 
 REST API Server에서 세션(Session)은 일반적으로 서버와 클라이언트 간의 Stateful 통신을 나타냅니다.  
 REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요청이 이전 요청에 의존하지 않고 요청을 수행하는데 필요한 모든 정보를 포함해야 한다는 것을 의미합니다.  
@@ -97,7 +97,7 @@ REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요�
 서버는 이 상태 정보를 메모리, 데이터베이스 또는 기타 저장 메커니즘에 저장하고 이를 사용하여 클라이언트의 요청에 대한 응답을 사용자 정의할 수 있습니다.   
 세션은 클라이언트 또는 서버에 의해 종료되거나 일정 기간 동안 사용하지 않으면 만료될 수 있습니다.
 
-#### 특징
+## 특징
 
 1. 상태 저장 통신(Stateful communication): 세션을 사용하면 클라이언트와 서버 간의 상태 저장 통신이 가능하므로 서버는 사용자 ID 및 권한 부여 상태와 같은 클라이언트별 정보를 추적할 수 있습니다.
 2. Session ID(세션 아이디): 클라이언트가 세션을 시작하면 서버는 세션 아이디로 알려진 고유 식별자를 생성하여 쿠키에 저장 후 클라이언트로 다시 보냅니다. 그런 다음 클라이언트는 서버에 대한 각 후속 요청에 이 세션 아이디를 통해서 클라이언트를 식별합니다.
@@ -114,29 +114,40 @@ REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요�
 ![session-anatomy](/assets/img/web/auth/session-anatomy.png)
 > [출처](https://dev.to/thecodearcher/what-really-is-the-difference-between-session-and-token-based-authentication-2o39)
 
-#### Spring Framework에서의 Session
+## Spring Framework에서의 Session
 
 ![HttpSession](/assets/img/web/auth/HttpSession.png)
 
 Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용자의 세션과 관련된 데이터를 저장하고 처리합니다.   
-``` HttpSession ```은 퍼사드 패턴(Facade Pattern)을 통해 ``` StandardSessionFacade > StandardSession ```로 이어지는 기본 구현체를 가지고 있습니다.
+``` HttpSession ```은 퍼사드 패턴(Facade Pattern)을 사용하여 관리하고 있습니다.
+퍼사드 패턴에서 사용 될 통합 인터페이스로는 ``` StandardSessionFacade ```를 구현하였고 ``` HttpSession ``` 기본 구현체로는 ``` StandardSession ```객체를 구현했습니다.
 
 > 퍼사드 패턴(Facade Pattern)이란?  
 > 먼저 퍼사드(Facade)는 프랑스어 Façade 에서 유래된 단어로 건물의 '외관'이라는 뜻입니다.  
 > 서브 시스템(내부 구조)에 있는 인터페이스들에 대한 통합된 인터페이스(외벽)를 제공하는 패턴입니다.  
 > 이로써 내부 시스템의 복잡도를 감추기 위해 복잡한 기능을 감싸고 상호 작용할 더 단순한 메소드를 제공하는 계층을 생성하고 서브시스템과 상호 작용 복잡도를 낮추는데 의미가 있습니다.
 
-최초에 ``` HttpSession ``` 을 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 ``` StandardSession ```를 주입받는 ``` StandardSessionFacade ```를 통해 관리하게 됩니다.
+### 생성
+
+최초에 ``` HttpSession ``` 을 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 사용하게 되는데, 기본 구현체인 ``` StandardSession ```를 주입받는 ``` StandardSessionFacade ```를 통해 서버내의 세션을 관리하게 됩니다.
 
 ![HttpSession-created](/assets/img/web/auth/HttpSession-created.png)
 
 사실 ``` HttpSession.getSession() ``` 을 통해 HttpSession을 생성하기 이전에 많은 일들이 발생합니다.  
-간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 ***세션 생성 및 Validation***이 이루어 집니다.
+간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 ***세션 생성 및 validation***이 이루어 집니다.
 
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
 > org.apache.catalina.connector.Request.doGetSession()  
-> 세션을 생성하고, 생성한 세션 아이디를 JSESSIONID: 세션 아이디 value Response 쿠키에 추가합니다.
+> 세션을 생성하고, 생성한 세션 아이디를 value에 담아 JSESSIONID라는 이름의 key로 Response 쿠키에 추가합니다.
+
+추가로 세션 아이디는 ``` org.apache.catalina.util.StandardSessionIdGenerator.generateSessionId()  ``` 메소드를 활용하여 생성합니다.
+
+![SessionIdGenerator](/assets/img/web/auth/SessionIdGenerator.png)
+
+> 16바이트 길이의 랜덤값을 뽑아서 16진수 32자 문자열을 만듭니다.  
+> 또 ``` generateSessionId() ``` 내부에서 ``` route ```를 인자로 받는 ``` generateSessionId(String) ```메소드를 사용하는데, 해당 인자는 서블릿 컨테이너에 접속한 사용자를 구분하는 값으로 Route나 jvmRoute로 사용됩니다.  
+> Route로 받는 값이 있는 경우 문자열 뒤에 ".route"를 추가하고, 그렇지 않을 경우는 ".jvmRoute"를 추가하게 됩니다.
 
 ![ManagerBase-createSession](/assets/img/web/auth/ManagerBase-createSession.png)
 
@@ -144,9 +155,13 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 > MaxActiveSession 갯수를 validation 하고, 최초 세션 생성 시(createEmptySession) 세션의 정보(세션 생성 시간, 세션 아이디, 세션 유효 시간 등...)을 설정합니다.
 
 간략하게나마 HttpSession 객체가 어떻게 생성되는지 확인 했습니다.  
-다음은 HttpSession이 제공하는 대표적인 method ``` setAttribute(), getAttribute(), invalidate() ``` 를 통해서, HttpSession 객체는 어떤 식으로 세션을 관리하는지 알아보겠습니다.  
+다음은 HttpSession이 제공하는 대표적인 method ``` setAttribute(), getAttribute(), invalidate() ``` 를 통해서, HttpSession 객체는 어떤 식으로 세션을 관리하는지 알아보겠습니다.
+
+### 주요 메소드
+
+### setAttribute(String, Object)
+> 첫번째 파라미터로 넘어온 이름으로 두번째 객체를 세션에 바인딩합니다.  
+> 이미 같은 이름의 객체가 세션에 바인딩 되어 있다면 후에 들어온 객체로 덮어쓰여집니다.  
+> 또 전달된 값이 null이라면 removeAttribute()를 호출하는 것과 같습니다.  
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
-
-
-
