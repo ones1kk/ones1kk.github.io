@@ -21,7 +21,7 @@ ignore 된 파일의 변경 사항을 추적하고 동시에 관리하기란 여
 먼저 [개발자 GitHub 페이지](https://github.com/ulisesbocchio/jasypt-spring-boot)입니다.  
 이번 글에서는 간단한 사용법, 유용한 팁(?)을 함께 기술할 예정입니다.  
 보다 자세한 내용이 궁금하신 분들은 해당 사이트에서 확인하시길 바라겠습니다.
-### 먼저 당연히 해당 프로젝트에 의존성을 주입 받아야합니다.(2022년 12월 15일에 release된 가장 최신 버전 3.0.5)
+## 먼저 당연히 해당 프로젝트에 의존성을 주입 받아야합니다.(2022년 12월 15일에 release된 가장 최신 버전 3.0.5)
 
 ```groovy
 dependencies {
@@ -38,10 +38,10 @@ dependencies {
 
 ```
 
-### Jasypt Encryptor가 사용할 Password를 생성해야 합니다.
+## Jasypt Encryptor가 사용할 Password를 생성해야 합니다.
 [Jasypt Online Encryption and Decryption(Free)](https://www.devglan.com/online-tools/jasypt-online-encryption-decryption) 사이트를 통해서 Two way Encryption Password를 생성할 수 있습니다.
 
-### Configration class를 작성해야 합니다.
+## Configration class를 작성해야 합니다.
 
 ```java 
 @Configuration
@@ -78,10 +78,10 @@ public class JasyptConfig {
 ```
 > @EnableEncryptableProperties은 해당 라이브러리에서 제공하는 어노테이션으로 해당 어노테이션을 꼭 명시해주셔야 합니다.
 
-### 2번째 스텝에서 만든 password가 ```SimpleStringPBEConfig```의 비밀번호로 사용됩니다.
+## 2번째 스텝에서 만든 password가 ```SimpleStringPBEConfig```의 비밀번호로 사용됩니다.
 여기서 시스템 환경 변수를 통해서 password를 주입을 받는 이유는 뒤에 설명하겠습니다.
 
-### 그 후 Properties를 암호화합니다.
+## 그 후 Properties를 암호화합니다.
 
 ```java
 class JasyptConfigTest {
@@ -121,7 +121,7 @@ class JasyptConfigTest {
 }
 ```
 
-### 혹은 위 코드가 복잡하다고 생각이 드시면, @SpringBootTest를 통한 통합 테스트 환경에서 DI 받아 암호화하는 방법도 있습니다.
+## 혹은 위 코드가 복잡하다고 생각이 드시면, @SpringBootTest를 통한 통합 테스트 환경에서 DI 받아 암호화하는 방법도 있습니다.
 
 ```java 
 @SpringBootTest
@@ -151,7 +151,7 @@ class JasyptConfigTest {
 > 저는 위와 같은 방식으로 진행했는데, 더 좋은 방법이 있으면 알려주십시오❗️❗️❗️  
 해당 테스트 코드를 실행하면 암.복호화가 정상적으로 동작하는지 확인할 수 있고, 암호화된 값이 console창에 print됩니다.
 
-### 암호화가 된 값을 기존 Application Properties 값에 대체해줍니다.
+## 암호화가 된 값을 기존 Application Properties 값에 대체해줍니다.
 
 ```yml
 (전)
@@ -181,7 +181,7 @@ jasypt:
       suffix: 변경할 suffix
 ```
 
-### 그 후 ``` Run/Debug Configurations ```에서 vm option을 추가합니다.
+## 그 후 ``` Run/Debug Configurations ```에서 vm option을 추가합니다.
 ![add-vm-option](/assets/img/spring/library/configuration-vm-option.png)
 
 ### 정상적으로 실행이 되는 것을 확인 할 수 있으실겁니다❗️❗️❗️
@@ -189,7 +189,7 @@ jasypt:
 
 # 유용한 팁(?)
 
-### 통합 테스트 환경 Jasypt vm option 추가
+## 통합 테스트 환경 Jasypt vm option 추가
 ``` @SpringBootTest, @DataJpaTest, @WebMvcTest... ```와 같은 Spring 환경에서의 테스트 진행 시, 단위 테스트와는 다르게 SpringContext에 있는 정보들을 끌어 올려서 어플리케이션을 구동시키기 때문에 Jasypt 사용 설정이 필수적입니다.  
 만일 다른 설정 없이 통합 테스트를 실행시킨다면 Application Properties를 사용하는 Bean들이 정상적으로 생성이 안돼서, ``` BeanCreationException ``` 결국 ``` IllegalStateException: Failed to load ApplicationContext ``` Exception을 내뱉게 됩니다.  
 ![IllegalStateException](/assets/img/spring/library/illegal-state-exception.png)
@@ -259,7 +259,7 @@ jobs:
  
 build를 실행하기 전에, remote repository에 없는 password.txt를 생성하여 빌드를 진행하게 됩니다.
 
-### jasypt.encryptor.password를 환경 변수로 받는 이유
+## jasypt.encryptor.password를 환경 변수로 받는 이유
 ``` JasyptStringEncryptor ```는 ``` ${jasypt.encryptor.password} ``` 값을 통해서 Bean으로 생성되고, Application Properties를 사용하고 있는 모든 클래스들에게 value 값을 복호화 해주는 flow로 진행이 됩니다.
 
 

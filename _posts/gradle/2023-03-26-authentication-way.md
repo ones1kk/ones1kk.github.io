@@ -2,7 +2,7 @@
 title: JWT(JSON Web Token) & Session & Cookie
 date: 2023-03-26 00:28:10 +09:00
 categories: [Web]
-tags: [jwt, session, cookie, httpSession, spring-framework]
+tags: [jwt, session, cookie, spring-framework]
 ---
 
 # 들어가기에 앞서
@@ -14,7 +14,7 @@ tags: [jwt, session, cookie, httpSession, spring-framework]
 
 ## 역사
 JWT는 JSON Web Token의 줄임말로 일반적으로 웹 애플리케이션에서 인증 및 권한 부여 목적으로 사용되는 표준입니다.  
-XML을 이용하여 인터넷을 통해 데이터를 전송하던 2000년대 초반 때, 웹 애플리케이션이 점점 가볍고 이동성이 높은 JSON 데이터 전송 방식을 선호하게 되는 시점과 함께 JWT는 JSON 형식으로 데이터를 안전하게 전송하기 위한 수단으로 개발 되었습니다.
+XML을 이용하여 인터넷을 통해 데이터를 전송하던 2000년대 초, 웹 애플리케이션이 점점 가볍고 이동성이 높은 JSON 데이터 전송 방식을 선호하게 되는 시점과 함께 JWT는 JSON 형식으로 데이터를 안전하게 전송하기 위한 수단으로 개발 되었습니다.
 
 ## 배경
 웹 애플리케이션이 더욱 복잡해지고 여러 사용자가 이용함에 따라 안전하고 명백한 방식으로 웹 애플리케이션을 처리할 필요성이 대두 되었습니다.  
@@ -71,6 +71,7 @@ REST API Server를 Stateless하게 설계하게 되면 얻게 되는 몇 가지 
 어떤 이유로 Stateless로 서버를 설계하는지, JWT는 어떤 점이 부합하는지 알아 보도록 하겠습니다.
 
 ## REST API 서버를 Stateless로 설계해야 하는 이유
+
 1. Scalability(확장성): Stateless 서버는 각 요청에 요청을 처리하는 데 필요한 모든 정보가 들어 있으므로 요청은 서버 간에 세션 상태를 동기화할 필요 없이 여러 서버에 분산될 수 있습니다.
 2. Reliability(신뢰성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 안정적입니다. 관리할 세션 상태가 없기 때문에 버그나 오류가 발생할 가능성이 적습니다.
 3. Simplicity(단순성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 설계 및 구현이 간단합니다. 세션 상태에 의존하지 않음으로써 서버 로직을 단순화하여 보다 간단하고 유지관리 가능한 코드베이스로 이어질 수 있습니다.
@@ -83,7 +84,6 @@ REST API Server를 Stateless하게 설계하게 되면 얻게 되는 몇 가지 
 1. Cookie, Session과는 다르게 base64 인코딩을 통한 정보를 전달하므로 전송 데이터 양으로 인한 부하가 생길 수 있습니다.
 2. payload는 암호화가 되어있지 않기 때문에 민감한 정보를 저장할 수 없습니다.
 3. 토큰이 탈취 당한다면 토큰이 만료될 때까지 대처가 불가능합니다.
-
 
 # 세션(Session)
 
@@ -139,7 +139,7 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
 > org.apache.catalina.connector.Request.doGetSession()  
-> 세션을 생성하고, 생성한 세션 아이디를 value에 담아 JSESSIONID라는 이름의 key로 Response 쿠키에 추가합니다.
+> 세션을 생성하고, 생성한 세션 아이디를 value에 담아 JSESSIONID이라는 이름의 key로 Response 쿠키에 추가합니다.
 
 추가로 세션 아이디는 ``` org.apache.catalina.util.StandardSessionIdGenerator.generateSessionId()  ``` 메소드를 활용하여 생성합니다.
 
@@ -159,9 +159,119 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 
 ### 주요 메소드
 
-### setAttribute(String, Object)
+#### void setAttribute(String, Object)
+
 > 첫번째 파라미터로 넘어온 이름으로 두번째 객체를 세션에 바인딩합니다.  
 > 이미 같은 이름의 객체가 세션에 바인딩 되어 있다면 후에 들어온 객체로 덮어쓰여집니다.  
-> 또 전달된 값이 null이라면 removeAttribute()를 호출하는 것과 같습니다.  
+> 또 전달된 값이 null이라면 removeAttribute()를 호출하는 것과 같습니다.
+
+여기서 ***세션에 바인딩***한다는 의미는 생성된 ``` HttpSession ``` 객체 내부에 선언 되어 있는 ``` attributes ``` 맴버 변수에 저장한다는 의미 입니다.  
+파라미터로 넘어온 ``` key, value ``` 값들을 각각 validation 후 ``` ConcurrentHashMap ```로 선언 된 ``` attributes ``` 객체에 ``` put ``` 합니다.
+
+먼저 각 ``` key, value ``` 값이 null인지 체크합니다.(value가 null일시 ``` removeAtttibute() ```를 호출합니다.)  
+![validation-1](/assets/img/web/auth/validation-1.png)
+
+그 후 Session이 expired 되었는지, Session이 클러스터 환경의 여러 JVM에 분산 될 수 있는지 여부를 확인합니다.  
+![validation-2](/assets/img/web/auth/validation-2.png)
+
+앞의 과정을 걸친 후  최종적으로 ``` attributes ``` 객체에 등록됩니다.  
+![attributes](/assets/img/web/auth/attributes.png)
+
+> ConcurrentHashMap 이란?  
+> Map Interface를 Thread-Safe한 방식으로 구현한 것으로 여러 스레드에서 동시에 접근하고 수정하는 Multi-Thread 환경에서 사용하는 것이 적합한 구현체입니다.
+
+#### Object getAttribute(String)
+
+> 지정한 이름으로 바인딩된 객체를 반환하거나, 해당 이름으로 바인딩된 객체가 없으면 null을 반환합니다.
+
+``` setAttribute() ```를 통해 ``` attributes ```에 저장된 객체를 ``` key ``` 이름으로 가져옵니다.   
+``` attributes.get(key) ``` 이전에 Session이 expired 되었는지 validation을 합니다.
+
+![getAttribute](/assets/img/web/auth/getAttribute.png)
+
+#### void invalidate
+
+> 해당 세션 객체를 무효화한 다음, 바인딩 된 모든 객체를 제거합니다.
+
+먼저 	``` invalidate() ``` 메소드에서 유효한 session을 확인 후, 내부의 ``` expire() ``` 메소드를 호출합니다.    
+![invalidate](/assets/img/web/auth/invalidate.png)
+
+그리고 해당 세션 객체를 비활성화 하는데 필요한 내부 처리를 수행합니다.  
+![call-remove](/assets/img/web/auth/call-remove.png)
+
+![remove](/assets/img/web/auth/remove.png)
+
+Session 객체들을 관리하는 인터페이스 ``` org.apache.catalina.Manager ```의 기본 구현체 ``` org.apache.catalina.session.ManagerBase ```에서 식별된 해당 세션 객체를 제거(remove)합니다.
+
+결과적으로 ``` org.apache.catalina.session.ManagerBase ```의 ``` sessions ```의 사이즈는 0이 됩니다.  
+![result-of-sessions](/assets/img/web/auth/result-of-sessions.png)
+
+
+# 쿠키(Cookie)
+
+## 배경
+
+World Wide Web(WWWW)이 초기 단계였던 1994년, 넷스케이프(Netscape Communications Corporation)의 개발자였던 루 몬툴리(Lou Montuli)가 사용자의 컴퓨터에 소량의 데이터를 저장하는 방법으로 쿠키의 개념을 도입했습니다.  
+쿠키는 웹 사이트 또는 웹 응용 프로그램에 의해 사용자의 장치에 저장되는 작은 텍스트 파일(4KB이하)입니다.   
+사용자가 웹 사이트를 방문할 때 웹 사이트는 쿠키를 사용자의 브라우저로 보낼 수 있으며, 브라우저는 쿠키를 사용자의 장치에 저장합니다.
+
+## 특징
+
+1. 세션 관리(Session management): 쿠키를 사용하여 웹 사이트의 사용자 세션을 추적할 수 있으므로 사용자는 한 번의 로그인으로 다른 페이지에 액세스할 수 있습니다.
+2. 개인 설정(Personalization): 쿠키를 사용하여 언어 설정, 글꼴 크기 및 레이아웃 환경 설정과 같은 사용자의 환경을 설정할 수 있습니다.
+3. 추적(Tracking): 쿠키를 사용하여 웹 사이트에서 사용자가 방문하는 페이지, 사용자가 보는 제품 및 사용자가 수행하는 검색과 같은 사용자의 동작을 추적할 수 있습니다.
+
+## 장점
+
+1. 개인 설정(Personalization): 쿠키를 사용하면 웹 사이트에서 사용자의 기본 설정, 로그인 정보를 기억할 수 있으므로 사용자 환경을 보다 개인화하고 편리하게 만들 수 있습니다.
+2. 분석(Analytics): 사용자의 웹 사이트 사용에 대한 콘텐츠 및 마케팅 전략을 개선하고 최적화하는 데 도움이 될 수 있습니다.
+3. 광고(Advertising): 쿠키는 사용자의 행동과 관심사에 따라 표적 광고를 전달하는 데 사용될 수 있으며, 이는 비표적 광고보다 더 효과적일 수 있습니다.
+4. 전자상 거래(E-commerce): 쿠키는 사용자의 쇼핑 카트에 있는 항목을 기억하고, 개인화된 제품 권장 사항을 만들고, 체크아웃 프로세스를 용이하게 하는 데 사용될 수 있습니다.
+
+## 단점
+
+1. 개인 정보 보호(Privacy concerns): 쿠키를 사용하여 사용자의 행동 및 관심사에 대한 자세한 프로필들이 추적되고 있다는 것을 모르는 경우 개인 정보 보호 문제가 발생할 수 있습니다.
+2. 보안 위험(Security risks): 쿠키는 사용자의 계정 및 개인 정보를 손상시킬 수 있는 XSS(크로스 사이트 스크립팅) 공격 및 CSRF(크로스 사이트 요청 위조) 공격에 사용될 수 있습니다.
+3. 쿠키 차단(Cookie blocking): 브라우저 설정에서 쿠키를 차단할 수 있으므로 쿠키에 의존하는 웹 사이트의 기능이 제한될 수 있습니다.
+4. 구식 기술(Outdated technology): 쿠키는 서버 측 스토리지 및 로컬 스토리지와 같은 최신 기술보다 효율성이 떨어질 수 있는 오래된 기술입니다.
+
+> XSS(Cross Site Scripting)와 CSRF(Cross-site request forgery)  
+> XSS: 웹 사이트 관리자가 아닌 이가 웹 페이지에 악성 스크립트를 사입할 수 있는 취약점으로 발생되는 공격.  
+> CSRF: 사용자가 사용자가 자신의 의지와는 무관하게 공격자가 의도한 행위(수정, 삭제, 등록 등)를 특정 웹사이트에 요청하게 하는 공격을 말한다.   
+> XSS는 공격 대상이 Client, CSRF는 Server다.   
+> XSS는 사용자가 특정 웹사이트를 신용하는 점을 노린 것이라면, CSRF는 특정 웹사이트가 사용자의 웹 브라우저를 신용하는 상태를 노린 것이다.
+
+## Spring Framework에서의 Cookie
+
+Spring Framework에서는 ``` javax.servlet.http.Cookie ```를 활용해서 Cookie를 관리하고 처리합니다.
+
+![cookie](/assets/img/web/auth/cookie.png)   
+``` Cookie ``` 객체는 ***쿠키명과 쿠키 값***을 가진 생성자를 통해 생성합니다.
+
+생성된 ``` Cookie ``` 객체는 아래와 같이 다양한 메소드들을 제공하지만 주요 메소드 ``` setMaxAge(), setPath()``` 만 살펴 보겠습니다.     
+![cookie-method](/assets/img/web/auth/cookie-method.png)
+
+>  ``` Cookie ``` 객체는 ``` HttpSession ``` 객체에서 제공해주는 ``` invalidate ```와 같은 제거 전용 메소드가 없습니다.
+
+### 주요 메소드
+
+#### setMaxAge(int)
+
+쿠키의 최대 사용 기간(초)을 설정합니다.
+양수 값은 쿠키가 몇 초 후에 만료됨을 나타냅니다.  
+음수 값은 쿠키가 영구적으로 저장되지 않으며 웹 브라우저가 종료될 때 삭제됨을 의미합니다.  
+값이 0이면 쿠키가 삭제됩니다.
+
+#### setPath(String)
+
+클라이언트가 쿠키를 반환할 쿠키 경로를 지정합니다.  
+쿠키는 지정한 디렉토리의 모든 페이지와 해당 디렉토리의 하위 디렉토리에 있는 모든 페이지에 표시됩니다.
+쿠키 경로에는 쿠키를 설정하는 서블릿이 포함되어야 합니다.
+
+# 마치며
+이렇게 서버에서 보안, 인증, 권한 부여 등을 어떤 방법으로 처리할 수 있는지 확인했습니다.
+위에 서술 된 순서는 적용된 역사의 역순으로 작성이 되었습니다.  
+원래 의도한 바는 각각의 방식이 과거 기술의 어떤 부분을 보완하여 사용하였는지를 나타내기 위해 시간적 역순의 형태로 작성했습니다만 의도대로 작성 되었는지에 대해서는 저 스스로에게 의구심이 들긴 합니다.  
+하지만 각각의 기술들의 등장 배경, 장점, 단점 등을 통해서 좀 더 해당 기술에 대한 특징을 이해하는데 도움이 되길 바랍니다.
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.

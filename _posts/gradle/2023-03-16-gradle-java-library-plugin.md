@@ -5,7 +5,7 @@ categories: [Gradle]
 tags: [gradle]
 ---
 
-### 최근 멀티 모듈 프로젝트 환경을 구성하면서 겪었던 trouble이 몇 가지 있었습니다.
+# 최근 멀티 모듈 프로젝트 환경을 구성하면서 겪었던 trouble이 몇 가지 있었습니다.
 그 중 Gradle에서 제공하는 Dependency 관련된 trouble이 있었는데, 해당 프로젝트는 각 Layer, feature 별로 서브 모듈들을 가지고 있고 모듈에서 필요한 모듈의 의존성을 주입 받아 사용하는 환경이었습니다.   
 이 시점에서, 모듈 간 의존성을 설정하며 겪은 Trouble의 케이스를 적어 보면 아래와 같습니다.
 1. 코드 작성 시점에서 문제 없이 하위 모듈의 소스들을 가져와 작성은 되나 Runetime 시점에서는 NotFoundClassException이 발생한다.
@@ -21,7 +21,7 @@ tags: [gradle]
 
 결국 Gradle에서 제공해주는 [공식 문서](https://docs.gradle.org/current/userguide/what_is_gradle.html)를 처음부터 천천히 살펴보기로 했습니다.  
 그 중 [The Java Library Plugin](https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph) 페이지에서 원하는 내용을 확인 할 수 있었습니다.
-### 제가 이해한 개념을 요약 & 정리하여 적자면 아래와 같습니다.
+# 제가 이해한 개념을 요약 & 정리하여 적자면 아래와 같습니다.
 
 일반적으로 IDE에서 Gradle을 이용하여 Java 또는 Spring Project를 구성할 때, **build.gradle** 파일의 **dependency block**에 필요로 하는 라이브러리, 프레임워크의 의존성을 주입 받습니다.  
 예를 들어 Spring initializr를 활용해 Spring Boot 프로젝트를 생성하게 되면 **dependency block**에 아래와 같은 스크립트가 자동으로 생성되어 의존성 주입을 받는 것을 많이 본 적이 있습니다.
@@ -53,7 +53,7 @@ repositories {
 ```
 
 
-### 그럼 단지 저 ***dependencies block과 repsoitories block***만 지정 해주면 프로젝트 의존성을 설정 할 수 있을까요??🤔
+## 그럼 단지 저 ***dependencies block과 repsoitories block***만 지정 해주면 프로젝트 의존성을 설정 할 수 있을까요??🤔
 
 정답은 아닙니다.
 ```groovy
@@ -84,7 +84,7 @@ Java Plugin은 위와 같이 특징 및 강력한 이점들이 있습니다.
 하지만 그 중에서도 눈 여겨 볼 점은 ***Java Plugin***이 제공해주는 기능 중 5번째 ***프로젝트 의존성을 지정한다.*** 입니다❗️❗️❗️  
 ``` dependencies  block ```에서 ``` implementation, compileOnly, testImplementation``` 등과 같은 키워드들은 Java Plugin을 통해서 의존성 구성을 설정하게 되는 것입니다.
 
-### 그럼 해당 키워드들은 어떤 의미를 가질까요??
+## 그럼 해당 키워드들은 어떤 의미를 가질까요??
 아래의 다이어그램으로 해당 키워드들이 어떤 방식으로 의존성 구성을 하는지 확인할 수 있습니다.  
 ![main-configurations](/assets/img/gradle/java-main-configurations.png)
 > Main source set dependency configurations  
@@ -105,7 +105,7 @@ Java Plugin은 위와 같이 특징 및 강력한 이점들이 있습니다.
 3. testComplieClassPath: 지정한 sourceSets(test)의 경로에서 컴파일 시점까지의 생명 주기를 가집니다.
 4. testRuntimeClassPath: 지정한 sourceSets(test)의 경로에서 소스 코드를 실행한(RunTime) 시점까지의 생명 주기를 가집니다.
 
-### 이제 이정도면 어느 정도 ```Gradle```에서 의존성 구성을 어떤 식으로 처리하는지 알게 되었습니다.
+## 이제 이정도면 어느 정도 ```Gradle```에서 의존성 구성을 어떤 식으로 처리하는지 알게 되었습니다.
 
 그럼 이제 ``` spring-data-jpa를 ``` ``` implementation``` 받고있는 ``` domain-module ```을 의존성 주입 받아 사용해 보곘습니다. 아래와 같이 말이죠.
 ``` groovy 
@@ -115,7 +115,7 @@ dependencies {
 }
 ```
 
-### 오잉! 이상합니다! ``` another-module ```에서 ``` JpaRepository를 구현 받은 domain-module의 Repository```의 method들을 가져오지 못합니다!!!
+## 오잉! 이상합니다! ``` another-module ```에서 ``` JpaRepository를 구현 받은 domain-module의 Repository```의 method들을 가져오지 못합니다!!!
 아래와 같이 모든 classPath에 ``` domain-module ```이 들어 왔는데 말이죠 🤔
 
 ![gradle-dependency-tab](/assets/img/gradle/gradle-dependency-tab.png)
@@ -159,7 +159,7 @@ plugins {
 
 변경 후, Gradle를 새로 고침하면 정상적으로 의존성을 끌고 옵니다!!🥳
 
-### 이것으로 제가 겪었던 trouble에 대한 정리를 마치겠습니다.
+## 이것으로 제가 겪었던 trouble에 대한 정리를 마치겠습니다.
 
 > 추가로 개인적인 생각이지만 org.springframework.boot:spring-boot-starter-*** 관련 의존성을 주입 받을 때 아래 케이스들은 org.springframework.boot:spring-boot-starter-***.jar자체에 해당 외부 라이버리를 이미 jar로 갖고 있기 때문인 것 같습니다???
 > 1. 스프링 내부에서 사용하는 외부 라이브러리(ex: jackson)에 대한 의존성 관리 및 버전 관리를 명시적으로 해주지 않아도 되는 부분
@@ -170,12 +170,12 @@ plugins {
 
 > Prefer the implementation configuration over api when possible.
 
-#### implementation
+### implementation
 1. 타입이 메소드 바디 안에서만 쓰이는 경우
 2. 타입이 private 맴버(변수/메소드 등등)에서만 쓰이는 경우
 3. 타입이 인터널 클래스에서만 쓰이는 경우
 
-#### api
+### api
 1. 타입이 인터페이스나 슈퍼 클래스에서 쓰이는 경우
 2. 타입이 public/protected/package/private 메소드의 파라미터(메소드의 인자, 반환 타입 및 타입 파라미터)에서 쓰일 때
 3. 타입이 public 필드에서 쓰일 때
