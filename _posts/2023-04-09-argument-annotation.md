@@ -24,12 +24,12 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 ![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)
 
 ``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있습니다.  
-인터페이스명과 같이 매개 변수로 들어오는 값과 반환 값을 어떤 식으로 처리할지 구현하고 있지만 오늘은 ,서두에서 말씀드렸다싶이, 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
+인터페이스명과 같이 매개 변수로 들어오는 값과 반환 값을 어떤 식으로 처리할지 구현하고 있지만 오늘은 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
 
 ``` @ModelAttribute ```를 처리하기 위해서는 ``` ModelAttributeMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
 
 이 중에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
-해당 메소드는 내부에 ``` createAttribute(name, parameter, binderFactory, webRequest) 와. bindRequestParameters(binder, webRequest) ```를 가지고 있습니다.
+해당 메소드는 내부에 핵심 로직을 담당하는 ``` createAttribute(name, parameter, binderFactory, webRequest) 와 bindRequestParameters(binder, webRequest) ```를 가지고 있습니다.
 
 ![createAttribute](/assets/img/argument/create-attribute.png)   
 먼저 ``` createAttribute() ```를 살펴보면, 이 메소드의 핵심 메소드는 ``` constructAttribute() ```입니다.  
@@ -37,11 +37,23 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 ![constructAttribute-1](/assets/img/argument/construct-attribute-1.png)
 
-1. 먼저 적절한 생성자가 있는지 확인합니다. 적절한 생성자가 없다면 새로운 객체 인스턴스를 생성해 반환합니다.
+- 먼저 적절한 생성자가 있는지 확인합니다.
+- 적절한 생성자가 없다면 새로운 객체 인스턴스를 생성해 반환하고 메소드를 종료합니다.
 
 ![constructAttribute-2](/assets/img/argument/construct-attribute-2.png)
 
-2. 만일 적절한 생성자가 있다면, ``` HttpRequest ```의 파라미터 값과 해당 생성자를 조합해 생성한 객체를 반환합니다.
+- 만일 적절한 생성자가 있다면, ``` HttpRequest ```의 파라미터 값과 파라미터 이름을 해당 생성자의 타입과 이름을 비교하여 생성한 객체를 반환합니다.
+
+위의 과정을 걸쳐 생성된 모델 속성 객체(attribute)는 ``` constructAttribute() ``` 메소드를 활용하여 생성자를 통한 객체 생성 및 값 바인딩만 된 상태로, 생성자에서 값이 바인딩 되지 않은 필드가 있다면 아직 해당 필드는 null 값인 상태입니다.  
+
+예를 들어 아래와 같은 ```Member ``` 객체를 이용했다면, 선언되어 있는 생성자를 사용하여 ``` constructAttribute() ``` 메소드가 해당 객체를 생성 후 반환합니다.    
+
+![member](/assets/img/argument/member.png)
+
+![call-bind-request-parameters](/assets/img/argument/call-bind-request-parameters.png)
+
+디버그 창에서 보이듯이 ``` age ``` 필드의 값은 null인 상태고, ```age ```값을  바인딩하기 위해서는 ``` bindRequestParameters() ```를 통한 추가적인 바인딩이 이루어져야 합니다.
+
 
 # @RequestBody
 
@@ -64,7 +76,6 @@ Spring은 ``` org.springframework.http.converter.HttpMessageConverter ```를 사
 
 @ModelAttribute와 @RequestBody는 모두 Spring MVC에서 활용되는 중요한 어노테이션입니다.  
 요청 데이터를 메소드 매개 변수에 매핑하는 데 사용되지만 목적이 다릅니다.  
-``` @ModelAttribute ```는 다양한 소스의 데이터를 명명된 모델 특성으로 바인딩하는 데 사용되는 반면 ``` @RequestBody ``` 는 HTTP 요청 본문을 메소드에 매핑하는데 사용됩니다.
-
+``` @ModelAttribute ```는 다양한 소스의 데이터를 명명된 모델 특성으로 바인딩하는 데 사용되는 반면 ``` @RequestBody ``` 는 HTTP 요청 본문을 메소드에 매핑하는데 사용됩니다.  
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
