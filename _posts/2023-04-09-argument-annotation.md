@@ -2,7 +2,7 @@
 title: 어노테이션 ModelAttribute vs RequestBody
 date: 2023-04-09 11:10:00 +09:00
 categories: [Spring]
-tags: [mvc]
+tags: []
 ---
 
 # 들어가기에 앞서
