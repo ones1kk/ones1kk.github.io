@@ -2,7 +2,7 @@
 title: Jaypt Spring Boot 라이브러리
 date: 2023-03-20 00:28:10 +09:00
 categories: [Spring, Library]
-tags: [library, spring-boot-library, java-library]
+tags: [property-encrypt, library]
 ---
 
 Git 저장소(ex: GitHub, GitLab, Bitbucket...)를 통해서 코드를 관리할 때, private repository인 경우는 해당없지만, public repository로 관리하다 보면 민감한 정보에 대한 처리는 필수적입니다.  
