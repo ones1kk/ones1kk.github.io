@@ -2,7 +2,7 @@
 title: 어노테이션 ModelAttribute vs RequestBody
 date: 2023-04-09 11:10:00 +09:00
 categories: [Spring]
-tags: []
+tags: [spring-mvc]
 ---
 
 # 들어가기에 앞서
@@ -54,7 +54,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 디버그 창에서 보이듯이 ``` age ``` 필드의 값은 0인 상태고, ```age ```값을  바인딩하기 위해서는 ``` bindRequestParameters() ```를 통해 이루집니다.
 
-![bindRequestParameters](/assets/img/argument/bindRequestParameters.png)
+![bind-request-parameters](/assets/img/argument/bind-request-parameters.png)
 
 매개 변수로 넘겨 받은 ``` WebDataBinder ```를 ``` ServletRequestDataBinder ``` 다운 캐스팅 후 ``` bind(ServletRequest) ```를 호출합니다.
 
