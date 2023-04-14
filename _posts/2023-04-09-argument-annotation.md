@@ -8,8 +8,7 @@ tags: [spring-mvc]
 # 들어가기에 앞서
 
 Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션(Annotation)을 제공합니다.  
-가장 일반적으로 사용되는 두 개의 어노테이션은 ``` @ModelAttribute 와 @RequestBody ```가 있습니다.  
-두 어노테이션은 모두 Spring MVC 컨트롤러의 메소드 매개 변수에 요청 데이터를 매핑하는데 사용합니다.  
+가장 일반적으로 사용되는  ``` @ModelAttribute 와 @RequestBody ``` 두 어노테이션은 모두 Spring MVC 컨트롤러의 메소드 매개 변수에 요청 데이터를 매핑하는데 사용합니다.  
 이 글에서는 ``` @ModelAttribute 와 @RequestBody ``` 각각의 어노테이션이 요청 데이터를 어떤 식(흐름)으로 매핑하는지에만 중점적으로 살펴보고자 합니다.
 
 # @ModelAttribute
@@ -21,14 +20,14 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 ## @ModelAttribute의 동작 방식
 
-![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)
+``` @ModelAttribute ``` 선언된 매개 변수 매핑을 처리하기 위해서는 ``` ModelAttributeMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
 
-``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있습니다.  
-인터페이스명과 같이 매개 변수로 들어오는 값과 반환 값을 어떤 식으로 처리할지 구현하고 있지만 오늘은 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
+![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)  
 
-``` @ModelAttribute ```를 처리하기 위해서는 ``` ModelAttributeMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
+``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있지만, 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
 
-이 중에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
+
+이 중 ***매개 변수 매핑 처리***에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
 해당 메소드는 내부에 핵심 로직을 담당하는 ``` createAttribute(name, parameter, binderFactory, webRequest) 와 bindRequestParameters(binder, webRequest) ```를 가지고 있습니다.
 
 ![createAttribute](/assets/img/argument/create-attribute.png)   

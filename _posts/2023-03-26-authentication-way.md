@@ -139,7 +139,7 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
 > org.apache.catalina.connector.Request.doGetSession()  
-> 세션을 생성하고, 생성한 세션 아이디를 value에 담아 JSESSIONID이라는 이름의 key로 Response 쿠키에 추가합니다.
+> 세션을 생성하고, 생성한 세션 아이디를 value에 담아 JSESSIONID라는 이름의 name으로 Response 쿠키에 추가합니다.
 
 추가로 세션 아이디는 ``` org.apache.catalina.util.StandardSessionIdGenerator.generateSessionId()  ``` 메소드를 활용하여 생성합니다.
 
@@ -187,7 +187,57 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ``` setAttribute() ```를 통해 ``` attributes ```에 저장된 객체를 ``` key ``` 이름으로 가져옵니다.   
 ``` attributes.get(key) ``` 이전에 Session이 expired 되었는지 validation을 합니다.
 
-![getAttribute](/assets/img/web/auth/getAttribute.png)
+![getAttribute](/assets/img/web/auth/getAttribute.png)   
+
+##### 서버는 어떻게 클라이언트별 세션 아이디와 서버의 세션 아이디를 확인하는지에 대해  
+
+세션 객체가 생성되면 서버는 리스폰즈에 쿠키에 세션 아이디(JSESSIONID) 값을 반환합니다.  
+그 후 클라이언트는 해당 세션 아이디 기반으로 서버에 여러 요청을 하게 됩니다.  
+그렇다면 서버는 어떻게 클라이언트를 식별하고 요청을 처리하는지 알아 보도록 하겠습니다.   
+
+예를 들어 다음과 같은 코드가 있다고 가정했을때, 해당 URL을 호출해봅니다.  
+
+```java
+@RestController
+@RequestMapping("/sample") 
+public class SampleController {
+
+    @GetMapping("greeting")
+    public Object getGreeting(HttpSession httpSession) {
+        return httpSession.getAttribute("greeting");
+    }
+    
+}
+```
+
+최초에 클라이언트가 서버에 요청하게 되면 먼저 ``` org.apache.catalina.connector.CoyoteAdapter ```는  ``` postParseRequest(rg.apache.coyote.Request, Request, org.apache.coyote.Response,
+Response) ``` 메소드를 통해 HTTP 헤더 구문을 분석합니다.  
+
+![post-parse-request](/assets/img/web/auth/post-parse-request.png)
+
+그 중 내부 메소드 중 ``` parseSessionCookiesId(org.apache.catalina.connector.Request) ```는 쿠키에 있는 세션 아이디를 찾아 ``` org.apache.catalina.connector.Request ``` 요청 세션 아이디로 저장합니다.  
+
+![parse-session-cookies-id](/assets/img/web/auth/parse-session-cookies-id.png)   
+
+``` parseSessionCookiesId(org.apache.catalina.connector.Request) ```를 통해 요청 세션 아이디를 저장합니다.  
+내부에 저장된 세션 아이디를 사용하여 ``` org.apache.catalina.connector.Request ```는 ``` org.apache.catalina.Manager ```에게 해당 세션 아이디를 가지는 객체가 있는지 찾는 요청을 보냅니다.  
+
+![call-find-session](/assets/img/web/auth/call-find-session.png)  
+
+요청하게 되면 ``` org.apache.catalina.Manager ```의 기본 구현체인  ``` org.apache.catalina.session.ManagerBase.findSession(String) ```이 동작하게 됩니다.  
+
+![find-session](/assets/img/web/auth/find-session.png)
+
+결과적으로 세션 아이디가 일치한 세션 객체를 찾아 클라이언트를 식별하게 됩니다.  
+> 세션 아이디가 서버의 ```` ConcurrentHashMap.sessions ````에 존재하지 않는다면, 서버는 새로운 세션 객체를 생성해서 반환하게 됩니다. 
+> 하지만 해당 세션의 attributes에 값은 존재하지 않습니다.
+
+
+그 후 클라이언트의 세션 아이디로 식별된 세션 객체는 ``` org.apache.catalina.authenticator.AuthenticatorBase ```에서 클라이언트의 인증 정보를 확인하고, 인증이 필요한 리소스에 대한 접근을 허용하거나 거부하는 등의 인증 처리를 처리합니다.     
+
+![authentication-invoke](/assets/img/web/auth/authentication-invoke.png)  
+
+위 과정이 모두 문제 없이 완료된다면, 정상적으로 ``` SampleController ```에 클라이언트 요청이 정상적으로 도착하여, 추가 로직을 수행할 수 있게 됩니다.
 
 #### void invalidate
 
