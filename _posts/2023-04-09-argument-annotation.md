@@ -88,7 +88,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 ## 특징
 
-@RequestBody 주석은 HTTP request body를 Spring MVC 컨트롤러의 메소드 매개 변수에 매핑하는데 사용됩니다.  
+@RequestBody 어노테이션은 HTTP request body를 Spring MVC 컨트롤러의 메소드 매개 변수에 매핑하는데 사용됩니다.  
 일반적으로 요청 데이터가 JSON 또는 XML과 같은 형식일 때 사용됩니다.  
 Spring은 ``` org.springframework.http.converter.HttpMessageConverter ```를 사용하여 request body를 매개 변수 유형으로 변환합니다.
 
@@ -110,18 +110,35 @@ Spring은 ``` org.springframework.http.converter.HttpMessageConverter ```를 사
 ``` messageConverters ``` 중 인자로 넘어온 ``` inputMessage(HttpServletRequest) ```를 converting 할 수 있는 converter를 찾습니다.
 converting을 처리할 수 있는 converter는  ``` org.springframework.http.converter.json.MappingJackson2HttpMessageConverter ```로 해당 converter의  ``` T read(Type,Class<?>, HttpInputMessage) ```메소드를 호출하여 주어진 입력 메시지에서 주어진 유형의 객체를 읽고 반환합니다.
 
+아래는 ``` MappingJackson2HttpMessageConverter ``` 의 내부 구현에 대한 설명입니다.
 
-# 차이
+![read](/assets/img/argument/read.png)
 
-``` @ModelAttribute ```를 사용하여 HTTP 요청 매개 변수 및 세션 특성과 같은 다양한 소스의 데이터를 바인딩할 수 있는 반면 ``` @RequestBody ```는 일반적으로 JSON 또는 XML 형식의 데이터에 사용됩니다.  
-또한 ``` @ModelAttribute ```는 GET 요청에 사용되는 반면 ``` @RequestBody ```는 일반적으로 POST 및 PUT 메소드에 사용됩니다.
-- @RequestBody에서는 Setter 사용이 불가능하겠네??(작성예정)
+``` org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter.read(Type, Class<?>, HttpInputMessage) ```는 내부 pirvate 메소드인 ``` Object readJavaType(JavaType, HttpInputMessage) ```를 호출합니다.
+
+![read-java-type](/assets/img/argument/read-java-type.png)
+
+``` MappingJackson2HttpMessageConverter ```은 내부적으로 ObjectMapper를 활용하여 각 분기문의 조건에 따라 readValue()를 사용하여 request body 값을 매개 변수에 값을 바인딩합니다.
+
+> ObjectMapper의 매핑 우선 순위
+> 1. ``` @JsonProperty, @JsonSetter ``` 등 클래스, 필드, 메소드 레벨에서 사용되는 어노테이션을 우선적으로 참고합니다.
+> 2. 클래스 내부에 매핑될 필드와 일치하는 이름을 가진 setter 메서드가 있다면, setter 메소드를 활용하여 값을 할당합니다.
+> 3. 필드의 접근 제어를 우회하여 리플렉션을 사용하거나, 필드가 public인 경우에 직접 값을 설정합니다.
+> 4. 생성자 매개변수와 매핑될 이름이 일치하는 경우, ObjectMapper는 생성자를 통해 객체를 생성하고 매개변수에 값을 할당합니다.
+> 5. ObjectMapper는 기본 생성자를 사용하여 객체를 생성하고, setter 메서드나 필드 접근을 통해 값을 할당합니다.
+
+ObjectMapper는 어노테이션과 setter 메서드가 가장 높은 우선 순위를 가지며, 필드 접근 및 생성자는 보조적으로 사용되는 방법입니다.
+
+결국 클라이언트에서 요청한 request body는 적절한 converter를 활용하여 매개 변수 타입으로 매핑하여 ``` @RequestBody ```를 사용한 컨트롤러 메소드에 반환되게 됩니다.
 
 # 결론
 
-@ModelAttribute와 @RequestBody는 모두 Spring MVC에서 활용되는 중요한 어노테이션입니다.  
-요청 데이터를 메소드 매개 변수에 매핑하는 데 사용되지만 목적이 다릅니다.  
-``` @ModelAttribute ```는 다양한 소스의 데이터를 명명된 모델 특성으로 바인딩하는 데 사용되는 반면 ``` @RequestBody ``` 는 HTTP 요청 본문을 메소드에 매핑하는데 사용됩니다.
+``` @ModelAttribute ```를 사용하여 HTTP 요청 매개 변수 및 세션 특성과 같은 다양한 소스의 데이터를 바인딩할 수 있는 반면 ``` @RequestBody ```는 일반적으로 JSON 또는 XML 형식의 데이터에 사용됩니다.  
+또한 ``` @ModelAttribute ```는 GET 요청에 사용되는 반면 ``` @RequestBody ```는 일반적으로 POST 및 PUT 메소드에 사용됩니다.
 
-오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
+``` @ModelAttribute와 @RequestBody ```는 모두 Spring MVC에서 활용되는 중요한 어노테이션입니다.  
+두 어노테이션 모두 요청 데이터를 메소드 매개 변수에 매핑하는데 사용되지만 ``` @ModelAttribute ```는 다양한 소스의 데이터를 모델 특성으로 바인딩하는 데 사용되는 반면 ``` @RequestBody ``` 는 HTTP request body를 메소드에 매핑하는데 사용됩니다.
 
+또한 ``` @ModelAttribute ```는 적절한 생성자가 없다면 setter를 필수로 가져야하지만, ``` @RequestBody ```는 내부적으로 ObjectMapper를 사용하기 때문에 setter 메소드가 필요 없다는 것이 큰 차이입니다.
+
+오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
