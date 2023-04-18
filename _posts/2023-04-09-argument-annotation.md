@@ -22,7 +22,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 ``` @ModelAttribute ``` 선언된 매개 변수 매핑을 처리하기 위해서는 ``` ModelAttributeMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
 
-![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)
+![ModelAttributeMethodProcessor](/assets/img/spring/argument/model-attribute-method-processor.png)
 
 ``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있지만, 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
 
@@ -30,16 +30,16 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 이 중 ***매개 변수 매핑 처리***에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
 해당 메소드는 내부에 핵심 로직을 담당하는 ``` createAttribute(name, parameter, binderFactory, webRequest) 와 bindRequestParameters(binder, webRequest) ```를 가지고 있습니다.
 
-![createAttribute](/assets/img/argument/create-attribute.png)   
+![createAttribute](/assets/img/spring/argument/create-attribute.png)   
 먼저 ``` createAttribute() ```를 살펴보면, 이 메소드의 핵심 메소드는 ``` constructAttribute() ```입니다.  
 ``` constructAttribute() ``` 는 컨트롤러의 매개 변수로 들어온 객체를 생성하는 메소드인데, 크게 두가지 부분으로 나누어서 볼 수 있습니다.
 
-![constructAttribute-1](/assets/img/argument/construct-attribute-1.png)
+![constructAttribute-1](/assets/img/spring/argument/construct-attribute-1.png)
 
 - 먼저 적절한 생성자가 있는지 확인합니다.
 - 적절한 생성자가 없다면 새로운 객체 인스턴스를 생성해 반환하고 메소드를 종료합니다.
 
-![constructAttribute-2](/assets/img/argument/construct-attribute-2.png)
+![constructAttribute-2](/assets/img/spring/argument/construct-attribute-2.png)
 
 - 만일 적절한 생성자가 있다면, ``` HttpRequest ```의 파라미터 값과 파라미터 이름을 해당 생성자의 타입과 이름을 비교하여 생성한 객체를 반환합니다.
 
@@ -47,25 +47,25 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 예를 들어 아래와 같은 ```Member ``` 객체를 이용했다면, 선언되어 있는 생성자를 사용하여 ``` constructAttribute() ``` 메소드가 해당 객체를 생성 후 반환합니다.
 
-![member](/assets/img/argument/member.png)
+![member](/assets/img/spring/argument/member.png)
 
-![call-bind-request-parameters](/assets/img/argument/call-bind-request-parameters.png)
+![call-bind-request-parameters](/assets/img/spring/argument/call-bind-request-parameters.png)
 
 디버그 창에서 보이듯이 ``` age ``` 필드의 값은 0인 상태고, ```age ```값을  바인딩하기 위해서는 ``` bindRequestParameters() ```를 통해 이루집니다.
 
-![bind-request-parameters](/assets/img/argument/bind-request-parameters.png)
+![bind-request-parameters](/assets/img/spring/argument/bind-request-parameters.png)
 
 매개 변수로 넘겨 받은 ``` WebDataBinder ```를 ``` ServletRequestDataBinder ``` 다운 캐스팅 후 ``` bind(ServletRequest) ```를 호출합니다.
 
-![bind](/assets/img/argument/bind.png)
+![bind](/assets/img/spring/argument/bind.png)
 
 그 후 Model의 property에 접근하여 값 변경을 돕는 ``` AbstractPropertyAccessor ```의 값들을 셋팅하게 됩니다.
 
-![process-local-property](/assets/img/argument/process-local-property.png)
+![process-local-property](/assets/img/spring/argument/process-local-property.png)
 
 ``` propertyHanlder ```를 통해 해당 모델에 존재하는 모든 property를 ``` setValue() ```해주게 됩니다.
 
-![set-value](/assets/img/argument/set-value.png)
+![set-value](/assets/img/spring/argument/set-value.png)
 
 기본적으로 reflection으로 생성한 Method의 접근 제어자를 접근 가능하게 변경해주고, ``` getWriteMethod() ```를 통해 추출한 프로퍼티 접근 메소드를 통해 전달받은 value를 설정합니다.
 
@@ -75,7 +75,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 이렇게 생성된 객체는 정상적으로 반환이 되어 컨트롤러 매개 변수 타입으로 바인딩 후 전달됩니다.
 
-![model-attribute-return](/assets/img/argument/model-attribute-return.png)
+![model-attribute-return](/assets/img/spring/argument/model-attribute-return.png)
 
 요약하자면
 1. ``` ModelAttributeMethodProcessor ```는  ``` @ModelAttribute ```가 선언 되어있는(해당 어노테이션이 없어도 자동으로) 컨트롤러 메소드 매개 변수에 있는 객체를 HttpServletRequest로 넘어온 파라미터와 자동으로 바인딩합니다.
@@ -94,29 +94,29 @@ Spring은 ``` org.springframework.http.converter.HttpMessageConverter ```를 사
 
 ## @RequestBody의 동작 방식
 
-![request-response-body-method-processor](/assets/img/argument/request-response-body-method-processor.png)
+![request-response-body-method-processor](/assets/img/spring/argument/request-response-body-method-processor.png)
 
 ``` @RequestBody ```가 선언된 매개 변수 매핑을 처리하기 위해서는 ``` RequestResponseBodyMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
 
 해당 클래스에서 핵심적으로 살펴볼 메소드는 ``` resolveArgument(MethodParameter, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ```로 request로 넘어온 body를 해당 메소드에서 처리합니다.  
 해당 메소드의 핵심 로직을 담당하는 ``` <T> Object readWithMessageConverters(NativeWebRequest, MethodParameter, Type paramType ``` 를 살펴 보겠습니다.
 
-![read-with-message-converters](/assets/img/argument/read-with-message-converters.png)
+![read-with-message-converters](/assets/img/spring/argument/read-with-message-converters.png)
 
 ``` WebRequest ```로 넘어온 값을 ``` ServletServerHttpRequest ``` 변환 하고, ``` @RequestBody ```를 사용한 메소드의 파라미터 정보들을 내부 protected 메소드인 ``` <T> Object readWithMessageConverters(HttpInputMessage, MethodParameter, Type) ``` 반환 값을 validation 후 최종적으로 반환합니다.
 
-![find-converter](/assets/img/argument/find-converter.png)
+![find-converter](/assets/img/spring/argument/find-converter.png)
 
 ``` messageConverters ``` 중 인자로 넘어온 ``` inputMessage(HttpServletRequest) ```를 converting 할 수 있는 converter를 찾습니다.
 converting을 처리할 수 있는 converter는  ``` org.springframework.http.converter.json.MappingJackson2HttpMessageConverter ```로 해당 converter의  ``` T read(Type,Class<?>, HttpInputMessage) ```메소드를 호출하여 주어진 입력 메시지에서 주어진 유형의 객체를 읽고 반환합니다.
 
 아래는 ``` MappingJackson2HttpMessageConverter ``` 의 내부 구현에 대한 설명입니다.
 
-![read](/assets/img/argument/read.png)
+![read](/assets/img/spring/argument/read.png)
 
 ``` org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter.read(Type, Class<?>, HttpInputMessage) ```는 내부 pirvate 메소드인 ``` Object readJavaType(JavaType, HttpInputMessage) ```를 호출합니다.
 
-![read-java-type](/assets/img/argument/read-java-type.png)
+![read-java-type](/assets/img/spring/argument/read-java-type.png)
 
 ``` MappingJackson2HttpMessageConverter ```은 내부적으로 ObjectMapper를 활용하여 각 분기문의 조건에 따라 readValue()를 사용하여 request body 값을 매개 변수에 값을 바인딩합니다.
 
