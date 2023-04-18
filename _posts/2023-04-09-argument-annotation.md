@@ -9,7 +9,7 @@ tags: [spring-mvc]
 
 Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션(Annotation)을 제공합니다.  
 가장 일반적으로 사용되는  ``` @ModelAttribute 와 @RequestBody ``` 두 어노테이션은 모두 Spring MVC 컨트롤러의 메소드 매개 변수에 요청 데이터를 매핑하는데 사용합니다.  
-이 글에서는 ``` @ModelAttribute 와 @RequestBody ``` 각각의 어노테이션이 요청 데이터를 어떤 식(흐름)으로 매핑하는지에만 중점적으로 살펴보고자 합니다.
+이 글에서는 ``` @ModelAttribute 와 @RequestBody ``` 각각의 어노테이션이 요청 데이터를 어떤 식(흐름)으로 사용이 되는지 살펴보고자 합니다.
 
 # @ModelAttribute
 
@@ -22,7 +22,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 
 ``` @ModelAttribute ``` 선언된 매개 변수 매핑을 처리하기 위해서는 ``` ModelAttributeMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
 
-![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)  
+![ModelAttributeMethodProcessor](/assets/img/argument/model-attribute-method-processor.png)
 
 ``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있지만, 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
 
@@ -78,11 +78,11 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 ![model-attribute-return](/assets/img/argument/model-attribute-return.png)
 
 요약하자면
-1. ``` ModelAttributeMethodProcessor ```는  ``` @ModelAttribute ```가 선언 되어있는(해당 어노테이션이 없어도 자동으로) 컨트롤러 메소드 매개 변수에 있는 객체를 HttpServletRequest로 넘어온 파라미터와 자동으로 바인딩합니다.  
-2. 해당 바인딩은 먼저 컨트롤러 메소드 매개 변수의 적절한 생성자를 찾아 바인딩하고, 그 후 프로퍼티에 대한 접근법(setter, 접근 제어자...)이 제공이 된다면 해당 접근법을 사용하여 값을 바인딩합니다.  
-3. 프로퍼티 접근법이 제공되지 않는다면, 생성자를 통해서 생성된 객체만을 반환합니다.  
-4. 프로퍼티 접근법이 제공된다면, 값이 이미 있어도 접근 가능한 모든 프로퍼티에 값을 바인딩합니다.   
-5. 당연히 필드값이 일치하지 않거나 타입이 일치하지 않는다면 오류를 뱉습니다.  
+1. ``` ModelAttributeMethodProcessor ```는  ``` @ModelAttribute ```가 선언 되어있는(해당 어노테이션이 없어도 자동으로) 컨트롤러 메소드 매개 변수에 있는 객체를 HttpServletRequest로 넘어온 파라미터와 자동으로 바인딩합니다.
+2. 해당 바인딩은 먼저 컨트롤러 메소드 매개 변수의 적절한 생성자를 찾아 바인딩하고, 그 후 프로퍼티에 대한 접근법(setter, 접근 제어자...)이 제공이 된다면 해당 접근법을 사용하여 값을 바인딩합니다.
+3. 프로퍼티 접근법이 제공되지 않는다면, 생성자를 통해서 생성된 객체만을 반환합니다.
+4. 프로퍼티 접근법이 제공된다면, 값이 이미 있어도 접근 가능한 모든 프로퍼티에 값을 바인딩합니다.
+5. 당연히 필드값이 일치하지 않거나 타입이 일치하지 않는다면 오류를 뱉습니다.
 
 # @RequestBody
 
@@ -93,7 +93,23 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 Spring은 ``` org.springframework.http.converter.HttpMessageConverter ```를 사용하여 request body를 매개 변수 유형으로 변환합니다.
 
 ## @RequestBody의 동작 방식
-작성예정
+
+![request-response-body-method-processor](/assets/img/argument/request-response-body-method-processor.png)
+
+``` @RequestBody ```가 선언된 매개 변수 매핑을 처리하기 위해서는 ``` RequestResponseBodyMethodProcessor ```라는 ``` ArgumentResolver ```를 사용합니다.
+
+해당 클래스에서 핵심적으로 살펴볼 메소드는 ``` resolveArgument(MethodParameter, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ```로 request로 넘어온 body를 해당 메소드에서 처리합니다.  
+해당 메소드의 핵심 로직을 담당하는 ``` <T> Object readWithMessageConverters(NativeWebRequest, MethodParameter, Type paramType ``` 를 살펴 보겠습니다.
+
+![read-with-message-converters](/assets/img/argument/read-with-message-converters.png)
+
+``` WebRequest ```로 넘어온 값을 ``` ServletServerHttpRequest ``` 변환 하고, ``` @RequestBody ```를 사용한 메소드의 파라미터 정보들을 내부 protected 메소드인 ``` <T> Object readWithMessageConverters(HttpInputMessage, MethodParameter, Type) ``` 반환 값을 validation 후 최종적으로 반환합니다.
+
+![find-converter](/assets/img/argument/find-converter.png)
+
+``` messageConverters ``` 중 인자로 넘어온 ``` inputMessage(HttpServletRequest) ```를 converting 할 수 있는 converter를 찾습니다.
+converting을 처리할 수 있는 converter는  ``` org.springframework.http.converter.json.MappingJackson2HttpMessageConverter ```로 해당 converter의  ``` T read(Type,Class<?>, HttpInputMessage) ```메소드를 호출하여 주어진 입력 메시지에서 주어진 유형의 객체를 읽고 반환합니다.
+
 
 # 차이
 
