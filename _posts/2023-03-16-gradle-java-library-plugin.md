@@ -1,8 +1,8 @@
 ---
 title: Java Plugin & Java Library Plugin
 date: 2023-03-16 23:13:10 +09:00
-categories: [Gradle]
-tags: [gradle]
+categories: [Build Tool, Gradle]
+tags: [gradle, java-plugin, java-library-plugin]
 ---
 
 # 최근 멀티 모듈 프로젝트 환경을 구성하면서 겪었던 trouble이 몇 가지 있었습니다.
