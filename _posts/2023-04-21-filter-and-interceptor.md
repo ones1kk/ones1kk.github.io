@@ -25,7 +25,6 @@ tags: [Filter, Interceptor]
 필터는 여러개가 모여서 FilterChain이라는 하나의 체인으로 형성되어 사슬처럼 연쇄적으로 동작합니다.  
 다음 필터나 서블릿에게 요청을 전달하여 동작하며, 여러 개의 필터를 조합하여 사용할 수 있습니다.
 
-
 일반적으로 필터의 사용 용도는 아래와 같습니다.
 
 1. 보안 관련 공통 작업.
@@ -99,6 +98,7 @@ public abstract class HandlerInterceptorAdapter implements AsyncHandlerIntercept
 
 }
 ```   
+
 ``` HandlerInterceptor ``` 인터페이스의 메소드를 미리 구현해두고, 사용자가 필요한 메소드만 오버라이드하여 구현할 수 있도록 도와주는 클래스입니다.
 
 하지만 스프링 v5.3부터는 ***Deprecated*** 되면서, ``` HandlerInterceptor 또는 AsyncHandlerInterceptor ```를 구현하여 사용하는 것으로 변경되었습니다.
@@ -113,21 +113,21 @@ public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 			Object handler) throws Exception {
 	}
 }
-```
+```   
 
-Servlet 3.0부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
+***Servlet 3.0***부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
 ``` AsyncHandlerInterceptor ``` 스프링 MVC에서 비동기 요청 처리 시 필요한 로직을 구현할 수 있도록 지원해주는 클래스입니다.
 
 비동기 요청을 시작하면 ``` DispatcherServlet```은 일반적인 동기 요청 수행처럼 ```postHandle 및 afterCompletion ```을 호출하지 않고 대신 ``` afterConcurrentHandlingStarted ```를 호출하여 서블릿 컨테이너로 넘기기 전에 작업을 진행합니다.
 
 # 차이
 
-||필터(Filter)|인터셉터(Interceptor)|
-|:---:|:---:|:---:|
-|범위(Scope)|웹 애플리케이션 전역|스프링 컨테이너 내부|
-|위치(Position)|```DispatcherServlet ``` 이전 |``` DispatcherServlet ```과 핸들러(컨트롤러) 사이|
-|구현(Implementation)|```javax.servlet.Filter``` 인터페이스|``` HandlerInterceptor ``` 인터페이스|
-|작업 시점(Time of Work)|웹 애플리케이션 요청 전처리, 응답 후처리|핸들러(컨트롤러)의 실행 전, 후 또는 뷰의 렌더링 전, 후 |    
+|          -          |           필터(Filter)           |인터셉터(Interceptor)|
+|:-------------------:|:------------------------------:|:---:|
+|      범위(Scope)      |          웹 애플리케이션 전역           |스프링 컨테이너 내부|
+|    위치(Position)     |   ```DispatcherServlet``` 이전   |``` DispatcherServlet ```과 핸들러(컨트롤러) 사이|
+| 구현(Implementation)  |```javax.servlet.Filter``` 인터페이스|``` HandlerInterceptor ``` 인터페이스|
+| 작업 시점(Time of Work) |    웹 애플리케이션 요청 전처리, 응답 후처리     |핸들러(컨트롤러)의 실행 전, 후 또는 뷰의 렌더링 전, 후 |    
 
 # 결론
 
