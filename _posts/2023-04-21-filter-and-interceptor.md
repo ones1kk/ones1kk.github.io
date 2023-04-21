@@ -48,7 +48,7 @@ public interface Filter {
 
 # Interceptor
 
-![interceptor-work](/assets/img/spring/mvc/request-lifecycle/interceptor-work.png)  
+![interceptor-work](/assets/img/spring/mvc/request-lifecycle/interceptor-work.png)
 > [출처](https://medium.com/geekculture/what-is-handlerinterceptor-in-spring-mvc-110681604bd7)
 
 스프링의 인터셉터는 스프링 MVC에서만 동작하는 개념으로, ``` DispatcherServlet과 Controller ``` 사이에서 요청과 응답을 가로채어 처리하는 기능을 제공합니다.  
@@ -99,8 +99,40 @@ public abstract class HandlerInterceptorAdapter implements AsyncHandlerIntercept
 
 }
 ```   
+``` HandlerInterceptor ``` 인터페이스의 메소드를 미리 구현해두고, 사용자가 필요한 메소드만 오버라이드하여 구현할 수 있도록 도와주는 클래스입니다.
+
+하지만 스프링 v5.3부터는 ***Deprecated*** 되면서, ``` HandlerInterceptor 또는 AsyncHandlerInterceptor ```를 구현하여 사용하는 것으로 변경되었습니다.
 
 ## AsyncHandlerInterceptor
 
+```java 
+
+public interface AsyncHandlerInterceptor extends HandlerInterceptor {
+
+	default void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response,
+			Object handler) throws Exception {
+	}
+}
+```
+
+Servlet 3.0부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
+``` AsyncHandlerInterceptor ``` 스프링 MVC에서 비동기 요청 처리 시 필요한 로직을 구현할 수 있도록 지원해주는 클래스입니다.
+
+비동기 요청을 시작하면 ``` DispatcherServlet```은 일반적인 동기 요청 수행처럼 ```postHandle 및 afterCompletion ```을 호출하지 않고 대신 ``` afterConcurrentHandlingStarted ```를 호출하여 서블릿 컨테이너로 넘기기 전에 작업을 진행합니다.
+
+# 차이
+
+||필터(Filter)|인터셉터(Interceptor)|
+|:---:|:---:|:---:|
+|범위(Scope)|웹 애플리케이션 전역|스프링 컨테이너 내부|
+|위치(Position)|```DispatcherServlet ``` 이전 |``` DispatcherServlet ```과 핸들러(컨트롤러) 사이|
+|구현(Implementation)|```javax.servlet.Filter``` 인터페이스|``` HandlerInterceptor ``` 인터페이스|
+|작업 시점(Time of Work)|웹 애플리케이션 요청 전처리, 응답 후처리|핸들러(컨트롤러)의 실행 전, 후 또는 뷰의 렌더링 전, 후 |    
+
+# 결론
+
+필터는 웹 애플리케이션 전역에서 동작하며, ```DispatcherServlet ``` 이전에 요청과 응답을 가로채고 처리하는 기능을 가지고 있습니다.  
+반면 인터셉터는 스프링 컨테이너에서만 동작하며, ``` DispatcherServlet ```과 핸들러(Controller) 사이에서의 특정 핸들러에만 적용되는 기능을 가지고 있습니다.  
+따라서 필요한 기능과 범위에 따라 적절하게 필터와 인터셉터를 선택하여 사용하면 됩니다.
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
