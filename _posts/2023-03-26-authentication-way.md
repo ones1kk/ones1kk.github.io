@@ -1,5 +1,5 @@
 ---
-title: JWT(JSON Web Token) & Session & Cookie
+title: JWT(JSON Web Token) & 세션(Session) & 쿠키(Cookie)
 date: 2023-03-26 00:28:10 +09:00
 categories: [Web]
 tags: [jwt, session, cookie]

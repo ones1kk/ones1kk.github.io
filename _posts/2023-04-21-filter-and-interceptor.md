@@ -1,5 +1,5 @@
 ---
-title: Filter & Interceptor
+title: 필터(Filter) & 인터셉터(Interceptor)
 date: 2023-04-21 00:09:00 +09:00
 categories: [Spring, MVC]
 tags: [Filter, Interceptor]

@@ -1,5 +1,5 @@
 ---
-title: HandlerAdapter
+title: 핸들러어댑터(HandlerAdapter)
 date: 2023-04-23 00:01:00 +09:00
 categories: [Spring, MVC]
 tags: [Handler, HandlerMapping, HandlerAdapter]
