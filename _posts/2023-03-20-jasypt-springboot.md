@@ -221,7 +221,7 @@ def readJasyptPassword() {
 
 그렇기 때문에 추가적인 step이 필요한데, Github Actions를 예시로 설명을 드리겠습니다.
 
-먼저 ***Github Repsository > Settings > Secrets and variables > Actions***에서 ***New repository secret***을 통해 Jasypt password를 Repository secrets에 등록합니다.
+먼저 **Github Repsository > Settings > Secrets and variables > Actions**에서 **New repository secret**을 통해 Jasypt password를 Repository secrets에 등록합니다.
 
 그 후, 프로젝트의 root direcotry에 ``` .github/workflows/${원하는파일명}.yml ```을 생성하고 아래와 같이 내용을 입력합니다.
 ```yml

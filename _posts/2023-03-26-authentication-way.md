@@ -6,7 +6,7 @@ tags: [jwt, session, cookie]
 ---
 
 # 들어가기에 앞서
-서버에서 보안, 인증, 권한 부여 등을 확인하고 관리하는 방식은 대표적으로 ***쿠키, 세션, 토큰 3가지***가 있습니다.  
+서버에서 보안, 인증, 권한 부여 등을 확인하고 관리하는 방식은 대표적으로 **쿠키, 세션, 토큰 3가지**가 있습니다.  
 이 글에서는 3가지 방식(토큰은 JWT 기반)에 대해서 알아보고자 합니다.  
 추가로 Spring Framework 환경에서는 어떤 방식으로 세션을 처리하는지 간단한 예제와 설명도 함께 작성하도록 하겠습니다.
 
@@ -134,7 +134,7 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ![HttpSession-created](/assets/img/web/auth/HttpSession-created.png)
 
 사실 ``` HttpSession.getSession() ``` 을 통해 HttpSession을 생성하기 이전에 많은 일들이 발생합니다.  
-간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 ***세션 생성 및 validation***이 이루어 집니다.
+간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 **세션 생성 및 validation**이 이루어 집니다.
 
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
@@ -165,7 +165,7 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 > 이미 같은 이름의 객체가 세션에 바인딩 되어 있다면 후에 들어온 객체로 덮어쓰여집니다.  
 > 또 전달된 값이 null이라면 removeAttribute()를 호출하는 것과 같습니다.
 
-여기서 ***세션에 바인딩***한다는 의미는 생성된 ``` HttpSession ``` 객체 내부에 선언 되어 있는 ``` attributes ``` 맴버 변수에 저장한다는 의미 입니다.  
+여기서 **세션에 바인딩**한다는 의미는 생성된 ``` HttpSession ``` 객체 내부에 선언 되어 있는 ``` attributes ``` 맴버 변수에 저장한다는 의미 입니다.  
 파라미터로 넘어온 ``` key, value ``` 값들을 각각 validation 후 ``` ConcurrentHashMap ```로 선언 된 ``` attributes ``` 객체에 ``` put ``` 합니다.
 
 먼저 각 ``` key, value ``` 값이 null인지 체크합니다.(value가 null일시 ``` removeAtttibute() ```를 호출합니다.)  
@@ -296,7 +296,7 @@ World Wide Web(WWWW)이 초기 단계였던 1994년, 넷스케이프(Netscape Co
 Spring Framework에서는 ``` javax.servlet.http.Cookie ```를 활용해서 Cookie를 관리하고 처리합니다.
 
 ![cookie](/assets/img/web/auth/cookie.png)   
-``` Cookie ``` 객체는 ***쿠키명과 쿠키 값***을 가진 생성자를 통해 생성합니다.
+``` Cookie ``` 객체는 **쿠키명과 쿠키 값**을 가진 생성자를 통해 생성합니다.
 
 생성된 ``` Cookie ``` 객체는 아래와 같이 다양한 메소드들을 제공하지만 주요 메소드 ``` setMaxAge(), setPath()``` 만 살펴 보겠습니다.     
 ![cookie-method](/assets/img/web/auth/cookie-method.png)

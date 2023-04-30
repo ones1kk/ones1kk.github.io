@@ -17,7 +17,7 @@ tags: [Filter, Interceptor]
 
 필터는 스프링에서 제공하는 독자적인 기술이 아닌 자바 서블릿에서 제공하는 기술입니다.  
 ``` DispatcherServlet ```이 요청을 처리하기 전, 후의 웹 애플리케이션 요청과 응답을 가로채 필터링하는 역할을 합니다.  
-또한 필터는  ***웹 애플리케이션 영역(Context)*** 내에서 동작하므로, 스프링의 영역를 접근하기 어렵기 때문에 웹 애플리케이션 영역 내에서 필요한 자원들을 활용하여 사용되는 것이 특징입니다.
+또한 필터는  **웹 애플리케이션 영역(Context)** 내에서 동작하므로, 스프링의 영역를 접근하기 어렵기 때문에 웹 애플리케이션 영역 내에서 필요한 자원들을 활용하여 사용되는 것이 특징입니다.
 
 ![filterchain](/assets/img/spring/mvc/request-lifecycle/filterchain.png)
 > [출처](https://docs.spring.io/spring-security/reference/servlet/architecture.html)
@@ -54,7 +54,7 @@ public interface Filter {
 인터셉터는 스프링 MVC의 특정 핸들러(컨트롤러)의 메소드 호출 전, 후 또는 완료 후에 작업을 수행할 수 있습니다.   
 인터셉터는 컨트롤러의 실행, 뷰의 렌더링 전, 후 등 다양한 시점에서 작업을 수행할 수 있습니다.
 
-또한 인터셉터의 경우 ***스프링 영역(context)***내에 관리되고 있어서 스프링에서 생성된 빈들에 자유롭게 접근할 수 있습니다.  
+또한 인터셉터의 경우 **스프링 영역(context)**내에 관리되고 있어서 스프링에서 생성된 빈들에 자유롭게 접근할 수 있습니다.  
 가령 ``` HandlerInterceptor ```는 기분적인 구조를 유지하면서 스프링 빈을 DI(의존성 주입)받아 사용할 수 있기 때문에 스프링 컨택스트 리소스 사용을 수월하게 할 수 있습니다.
 
 일반적으로 인터페이스의 사용 용도는 아래와 같습니다.
@@ -101,7 +101,7 @@ public abstract class HandlerInterceptorAdapter implements AsyncHandlerIntercept
 
 ``` HandlerInterceptor ``` 인터페이스의 메소드를 미리 구현해두고, 사용자가 필요한 메소드만 오버라이드하여 구현할 수 있도록 도와주는 클래스입니다.
 
-하지만 스프링 v5.3부터는 ***Deprecated*** 되면서, ``` HandlerInterceptor 또는 AsyncHandlerInterceptor ```를 구현하여 사용하는 것으로 변경되었습니다.
+하지만 스프링 v5.3부터는 **Deprecated** 되면서, ``` HandlerInterceptor 또는 AsyncHandlerInterceptor ```를 구현하여 사용하는 것으로 변경되었습니다.
 
 ## AsyncHandlerInterceptor
 
@@ -114,7 +114,7 @@ public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 }
 ```   
 
-***Servlet 3.0***부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
+**Servlet 3.0**부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
 ``` AsyncHandlerInterceptor ``` 스프링 MVC에서 비동기 요청 처리 시 필요한 로직을 구현할 수 있도록 지원해주는 클래스입니다.
 
 비동기 요청을 시작하면 ``` DispatcherServlet```은 일반적인 동기 요청 수행처럼 ```postHandle 및 afterCompletion ```을 호출하지 않고 대신 ``` afterConcurrentHandlingStarted ```를 호출하여 서블릿 컨테이너로 넘기기 전에 작업을 진행합니다.

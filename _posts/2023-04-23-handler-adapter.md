@@ -69,7 +69,7 @@ tags: [Handler, HandlerMapping, HandlerAdapter]
 
 ![invoke-handler-method-2](/assets/img/spring/mvc/handler-adapter/invoke-handler-method-2.png)
 
-``` asyncManager, argumentResolvers, returnValueHandlers... ``` 들과 같은 사전 작업을 끝낸 후 실제 핸들러 메소드를 *** 리플렉션(Reflection)***을 통해 실행시킵니다.  
+``` asyncManager, argumentResolvers, returnValueHandlers... ``` 들과 같은 사전 작업을 끝낸 후 실제 핸들러 메소드를 **리플렉션(Reflection)**을 통해 실행시킵니다.  
 개발자가 작성한 코드를 스프링에서는 아주 정교한 단계별 검증을 통해 런타임 시점에 동적으로 처리 가능하도록 구현해 놓은 것입니다.
 
 # 결론

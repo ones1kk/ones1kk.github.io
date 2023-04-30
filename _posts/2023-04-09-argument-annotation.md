@@ -16,7 +16,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 ## 특징
 
 ``` @ModelAttribute ``` 어노테이션은 메소드 매개 변수 또는 메소드 반환 값을 명시된 모델 속성(Model Attribute)에 바인딩하는데 사용됩니다.   
-***메소드 매개 변수에 사용되는 경우*** 매개 변수가 명시된 모델 속성에 바인딩되어야 함을 나타내며, ***메소드에 사용되는 경우*** 반환 값이 모델 속성 값으로 사용되어야 함을 나타냅니다.
+**메소드 매개 변수에 사용되는 경우** 매개 변수가 명시된 모델 속성에 바인딩되어야 함을 나타내며, **메소드에 사용되는 경우** 반환 값이 모델 속성 값으로 사용되어야 함을 나타냅니다.
 
 ## @ModelAttribute의 동작 방식
 
@@ -27,7 +27,7 @@ Spring Framework는 웹 요청을 처리하기 위한 몇 가지 어노테이션
 ``` ModelAttributeMethodProcessor  ```은 ``` HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler ``` 2개의 인터페이스를 상속 받아 구현되어 있지만, 매개 변수를 어떤 식으로 매핑하는지 확인하기 위해 ``` ArgumentResolver ```의 내용만 다루도록 하겠습니다.
 
 
-이 중 ***매개 변수 매핑 처리***에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
+이 중 **매개 변수 매핑 처리**에서 핵심적으로 살펴 볼 메소드는 ``` Object resolveArgument(MethodParamete, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory) ``` 입니다.  
 해당 메소드는 내부에 핵심 로직을 담당하는 ``` createAttribute(name, parameter, binderFactory, webRequest) 와 bindRequestParameters(binder, webRequest) ```를 가지고 있습니다.
 
 ![createAttribute](/assets/img/spring/mvc/argument/create-attribute.png)   
