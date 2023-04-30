@@ -37,20 +37,15 @@ tags: [Handler, HandlerMapping, HandlerAdapter]
 
 5. WelcomePageHandlerMapping: Welcome 페이지(기본 페이지)를 처리하는 핸들러매핑입니다. 루트 경로("/")로 들어오는 요청을 처리할 때 사용됩니다.
 
-
 위의 핸들러매핑 이용하여 적절한 핸들러를 찾지 못해 null이 반환되면, 디스패처서블릿은 404 에러 코드를 반환합니다.
 
 ![no-handler-found](/assets/img/spring/mvc/handler-adapter/no-handler-found.png)
 
 ## 핸들러어댑터(HandlerAdapter)
 
-핸들러어댑터는 이름에서 확인할 수 있듯이 어댑터 패턴으로 구현된 클래스입니다. 스프링에서 지원하는 다양한 핸들러들을 처리할 수 있는 표준화된 인터페이스입니다. 핸들러어댑터를 통해 다양한 핸들러들을 일관된 방식으로 처리할 수 있게 됩니다.
-
-디스패처서블릿은 웹 요청을 처리할 적절한 핸들러를 찾았다면, 각 핸들러를 처리할 수 있는 핸들러어댑터를 가져옵니다.
+핸들러어댑터는 이름에서 확인할 수 있듯이 어댑터 패턴으로 구현된 클래스입니다. 핸들러어댑터를 통해 스프링에서 지원하는 다양한 핸들러들을 처리할 수 있는 표준화된 인터페이스입니다.
 
 ![get-handler-adapter](/assets/img/spring/mvc/handler-adapter/get-handler-adapter.png)
-
-이후 핸들러어댑터는 디스패처 서블릿에서 반환된 핸들러롤 통해 핸들러의 메소드를 실행시킵니다.
 
 ### 핸들러어댑터의 종류
 
@@ -61,5 +56,25 @@ tags: [Handler, HandlerMapping, HandlerAdapter]
 3. HttpRequestHandlerAdapter: ``` javax.servlet.http ``` 패키지의 ``` HttpRequestHandler ``` 인터페이스를 구현한 핸들러를 처리하는데 사용됩니다. ``` supports() ``` 메소드에서는 해당 핸들러가 ``` HttpRequestHandler ``` 인터페이스를 구현하고 있어야 합니다.
 
 4. SimpleControllerHandlerAdapter: 스프링 3 이전에 사용되었던 ``` SimpleController ``` 인터페이스를 구현한 컨트롤러를 처리하는데 사용됩니다. ``` supports() ``` 메소드에서는 해당 컨트롤러가 ``` SimpleController ``` 인터페이스를 구현하고 있어야 합니다.
+
+디스패처서블릿은 웹 요청을 처리할 적절한 핸들러를 찾았다면, 각 핸들러를 처리할 수 있는 핸들러어댑터를 가져옵니다.
+
+![call-hanlde](/assets/img/spring/mvc/handler-adapter/call-hanlde.png)
+
+이후 핸들러어댑터는 핸들러를 처리할 수 있는 적절한 어댑터로 핸들러의 메소드를 실행시킵니다.
+
+![invoke-handler-method-1](/assets/img/spring/mvc/handler-adapter/invoke-handler-method-1.png)
+
+현재까지는 실행시킬 핸들러 & 메소드의 정보를 구했을(매핑했을)뿐, 사실 핸들러 메소드를 동작시키기 위한 준비는 아직 끝난 상태가 아닙니다. 가령 해당 핸들러에서 처리할 파라미터, 반환 값 등을 어떤 식으로 어떻게 처리하기 위해 내부적으로는 해당 부분 처리 객체 세팅을 진행해야합니다.
+
+![invoke-handler-method-2](/assets/img/spring/mvc/handler-adapter/invoke-handler-method-2.png)
+
+``` asyncManager, argumentResolvers, returnValueHandlers... ``` 들과 같은 사전 작업을 끝낸 후 실제 핸들러 메소드를 *** 리플렉션(Reflection)***을 통해 실행시킵니다.  
+개발자가 작성한 코드를 스프링에서는 아주 정교한 단계별 검증을 통해 런타임 시점에 동적으로 처리 가능하도록 구현해 놓은 것입니다.
+
+# 결론
+
+핸들러어댑터는 스프링 프레임워크에서 핸들러 메소드를 호출하고, 그 결과를 처리하는 역할을 수행하는 인터페이스 중 하나입니다.
+핸들러어댑터는 컨트롤러와 뷰를 연결하는 등의 작업을 수행하여 스프링 MVC의 핵심적인 동작을 가능하게 합니다. 따라서 핸들러어댑터의 역할과 작동 원리에 대해 깊이 이해하면 스프링을 이용하는 개발자들에게 큰 도움이 될 것으로 보여집니다.
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
