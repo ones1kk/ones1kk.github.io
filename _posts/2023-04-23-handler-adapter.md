@@ -59,7 +59,7 @@ tags: [Handler, HandlerMapping, HandlerAdapter]
 
 디스패처서블릿은 웹 요청을 처리할 적절한 핸들러를 찾았다면, 각 핸들러를 처리할 수 있는 핸들러어댑터를 가져옵니다.
 
-![call-hanlde](/assets/img/spring/mvc/handler-adapter/call-hanlde.png)
+![call-hanlde](/assets/img/spring/mvc/handler-adapter/call-handle.png)
 
 이후 핸들러어댑터는 핸들러를 처리할 수 있는 적절한 어댑터로 핸들러의 메소드를 실행시킵니다.
 
