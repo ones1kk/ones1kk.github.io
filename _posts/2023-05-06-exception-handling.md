@@ -1,6 +1,6 @@
 ---
 title: 스프링의 예외 처리 방법
-date: 2023-05-03 00:10:00 +09:00
+date: 2023-05-06 00:10:00 +09:00
 categories: [Spring, MVC]
 tags: [BasicErrorController, HandlerExceptionResolver, ResponseStatus, ExceptionHandler, ControllerAdvice, RestControllerAdvice]
 ---
