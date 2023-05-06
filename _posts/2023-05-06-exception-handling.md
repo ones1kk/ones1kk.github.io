@@ -84,19 +84,22 @@ public class BasicErrorController extends AbstractErrorController {
 
 하지만 위와 같은 응답은 클라이언트 입장에서는 다소 불친절하게 느껴질 수 있습니다. 
 클라이언트는 ``Internal Server Error``라는 다소 모호한 메시지 보다는 명시적으로 해당 오류에 대한 유의미한 응답 메세지를 받고 싶을 것입니다. 
-그러므로 별도의 다양한 에러 처리를 통해 상황에 맞는 적절한 에러 응답을 제공해야 한다. 
+그러므로 별도의 다양한 에러 처리를 통해 상황에 맞는 적절한 에러 응답을 제공해야 합니다. 
 
 # 스프링이 제공하는 예외 처리 방법
 
-## ExceptionResolver
+## HandlerExceptionResolver
 
-###  ResponseStatus
-
-### ExceptionHandler
+## ExceptionHandlerExceptionResolver
 
 ### @ControllerAdvice
 
 ### @RestControllerAdvice
+
+## ResponseStatusExceptionResolver
+
+## DefaultHandlerExceptionResolver
+
 
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
