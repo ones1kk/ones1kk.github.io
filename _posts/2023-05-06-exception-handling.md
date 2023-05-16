@@ -9,13 +9,36 @@ tags: [BasicErrorController, HandlerExceptionResolver, ResponseStatus, Exception
 
 ![spring-exception-handling](/assets/img/spring/mvc/exception-handling/spring-exception-handling.png)  
 
-스프링은 기본적으로 예외를 받기 위한 ``org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController``를 구현해 놓았고, 이는 ``server.error.path``에 설정된 주소(기본은/error)가 매핑된 컨트롤러 입니다.
-컨트롤러 이하에서 발생한 예외를 캐치하여 해당 내용을 디스패처서블릿에서 에러컨트롤러로 요청을 보내게 됩니다.
+자바 프로그램은 예외가 발생하면 예외 정보를 남기고 쓰레드가 종료되는 반면에 스프링은 예외가 발생했을 때 웹 애플리케이션이 종료되지 않고 HTTP 상태 코드가 노출이 됩니다.
+스프링 부트는 컨트롤러 이하에서 발생한 예외를 캐치하여 쓰레드를 종료 시키는 것이 아닌 예외 내용을 디스패처서블릿에서 에러컨트롤러로 요청을 보냄으로써 마치 정상 요청인 것처럼 동작하게 됩니다.
+하지만 컨트롤러를 2번 호출한다는 것은 꽤나 불필요하다고 느껴지며 또 이는 필터나 인터셉터를 2번 호출하는 것을 의미합니다.
+이를 방지하기 위해 필터같은 경우는 등록할 때 DispatcherType을 설정 할 수 있으며 별다른 설정이 없다면 DispatcherType이 ERROR일 경우에는 호출되지 않습니다. 
+![do-filter](/assets/img/spring/mvc/exception-handling/do-filter.png)  
+
+인터셉터는 최초 인터셉터 등록 시 URI 패턴으로 처리 에러 URI를 제외해야합니다. 
+```java 
+@Configuration
+public class SampleConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new SampleInterceptor())
+                .excludePathPatterns("/error");
+    }
+}
+```
+
+스프링 부트는 위와 같이 예외를 캐치하여 호출할 에러 컨트롤러로  ``org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController`` 를 구현해 사용하고 있습니다. 
+
+
+
+
+스프링은 기본적으로 예외를 처리를 하기 위해 ``org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController``를 구현해 컨트롤러 이하에서 발생한 예외를 캐치하여 해당 내용을 디스패처서블릿에서 에러컨트롤러로 요청을 보내게 됩니다.
 즉 최초 요청 외에 에러컨트롤러를 한 번 더 요청하여 총 2번의 컨트롤러 호출이 발생합니다. 
 2번 컨트롤러를 호출한다는 것은 필터나 인터셉터를 2번 호출하게 되는 문제를 야기함을 의미합니다. 
 이를 방지하기 위해 필터를 등록할 때, DispatcherType을 설정 할 수 있으며, 인터셉터같은 경우는 최초 인터셉터 등록 시 URI 패턴으로 처리해야 합니다.
 
-![do-filter](/assets/img/spring/mvc/exception-handling/do-filter.png)
+
 
 > 필터같은 경우는 별다른 설정이 없다면, ``javax.servlet.DispatcherType`` 값이 ERROR일 경우에는 호출되지 않습니다.
 
@@ -90,16 +113,18 @@ public class BasicErrorController extends AbstractErrorController {
 
 ## HandlerExceptionResolver
 
+
+
+
+## DefaultHandlerExceptionResolver
+
+## ResponseStatusExceptionResolver
+
 ## ExceptionHandlerExceptionResolver
 
 ### @ControllerAdvice
 
 ### @RestControllerAdvice
-
-## ResponseStatusExceptionResolver
-
-## DefaultHandlerExceptionResolver
-
 
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
