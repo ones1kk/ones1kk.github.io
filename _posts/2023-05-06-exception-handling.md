@@ -2,7 +2,7 @@
 title: 스프링의 예외 처리 방법
 date: 2023-05-06 00:10:00 +09:00
 categories: [Spring, MVC]
-tags: [BasicErrorController, HandlerExceptionResolver, ResponseStatus, ExceptionHandler, ControllerAdvice, RestControllerAdvice]
+tags: [BasicErrorController, HandlerExceptionResolver, DefaultHandlerExceptionResolver, ResponseStatusExceptionResolver, ResponseStatus, ResponseStatusException, ExceptionHandler, ControllerAdvice, RestControllerAdvice]
 ---
 
 # 스프링의 기본 예외 처리 방법
@@ -165,32 +165,185 @@ public interface HandlerExceptionResolver {
 
 ## DefaultHandlerExceptionResolver
 
-스프링 내부의 기본 예외들을 처리하는 ``HandlerExceptionResolver`` 구현체로 발생한 예외들을 적절한 HTTP 상태 코드로 변경해주는 역활을 합니다. 
+표준 Spring MVC 예외들을 처리하는 ``HandlerExceptionResolver`` 구현체로 발생한 예외들을 적절한 HTTP 상태 코드로 변경해주는 역활을 합니다. 
 
 아래 표는 ``DefaultHandlerExceptionResolver``에서 변경해주는 예외 HTTP 상태 코드입니다.  
 
-|                 Exception                 |            HTTP  상태 코드            |
-|:-----------------------------------------:|:---------------------------------:|
-|  HttpRequestMethodNotSupportedException   |    405 (SC_METHOD_NOT_ALLOWED)    |
-|    HttpMediaTypeNotSupportedException     |  415 (SC_UNSUPPORTED_MEDIA_TYPE)  |
-|    HttpMediaTypeNotAcceptableException    |      406 (SC_NOT_ACCEPTABLE)      |
-|       MissingPathVariableException        |  500 (SC_INTERNAL_SERVER_ERROR)   |
-|  MissingServletRequestParameterException  |       400 (SC_BAD_REQUEST)        |
-|      ServletRequestBindingException       |       400 (SC_BAD_REQUEST)        |
-|      ConversionNotSupportedException      |  500 (SC_INTERNAL_SERVER_ERROR)   |
-|           TypeMismatchException           |       400 (SC_BAD_REQUEST)        |
-|      HttpMessageNotReadableException      |       400 (SC_BAD_REQUEST)        |
-|      HttpMessageNotWritableException      |  500 (SC_INTERNAL_SERVER_ERROR)   |
-|      MethodArgumentNotValidException      |       400 (SC_BAD_REQUEST)        |
-|    MissingServletRequestPartException     |       400 (SC_BAD_REQUEST)        |
-|               BindException               |       400 (SC_BAD_REQUEST)        |
-|          NoHandlerFoundException          |        404 (SC_NOT_FOUND)         |
-|       AsyncRequestTimeoutException        |   503 (SC_SERVICE_UNAVAILABLE)    |
+|              **Exception**              |         **HTTP  상태 코드**         |
+|:---------------------------------------:|:-------------------------------:|
+| HttpRequestMethodNotSupportedException  |   405 (SC_METHOD_NOT_ALLOWED)   |
+|   HttpMediaTypeNotSupportedException    | 415 (SC_UNSUPPORTED_MEDIA_TYPE) |
+|   HttpMediaTypeNotAcceptableException   |     406 (SC_NOT_ACCEPTABLE)     |
+|      MissingPathVariableException       | 500 (SC_INTERNAL_SERVER_ERROR)  |
+| MissingServletRequestParameterException |      400 (SC_BAD_REQUEST)       |
+|     ServletRequestBindingException      |      400 (SC_BAD_REQUEST)       |
+|     ConversionNotSupportedException     | 500 (SC_INTERNAL_SERVER_ERROR)  |
+|          TypeMismatchException          |      400 (SC_BAD_REQUEST)       |
+|     HttpMessageNotReadableException     |      400 (SC_BAD_REQUEST)       |
+|     HttpMessageNotWritableException     | 500 (SC_INTERNAL_SERVER_ERROR)  |
+|     MethodArgumentNotValidException     |      400 (SC_BAD_REQUEST)       |
+|   MissingServletRequestPartException    |      400 (SC_BAD_REQUEST)       |
+|              BindException              |      400 (SC_BAD_REQUEST)       |
+|         NoHandlerFoundException         |       404 (SC_NOT_FOUND)        |
+|      AsyncRequestTimeoutException       |  503 (SC_SERVICE_UNAVAILABLE)   |
 
+``DefaultHandlerExceptionResolver``는 아래의 ``doResolveException()``를 통해 표준 Spring MVC 예외를 위의 표에서 매핑되는 HTTP 상태 코드로 변환합니다.    
+
+```java
+@Override
+@Nullable
+protected ModelAndView doResolveException(
+    HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
+
+  try {
+    if (ex instanceof HttpRequestMethodNotSupportedException) {
+      return handleHttpRequestMethodNotSupported(
+          (HttpRequestMethodNotSupportedException) ex, request, response, handler);
+    }
+    else if (ex instanceof HttpMediaTypeNotSupportedException) {
+      return handleHttpMediaTypeNotSupported(
+          (HttpMediaTypeNotSupportedException) ex, request, response, handler);
+    }
+    else if (ex instanceof HttpMediaTypeNotAcceptableException) {
+      return handleHttpMediaTypeNotAcceptable(
+          (HttpMediaTypeNotAcceptableException) ex, request, response, handler);
+    }
+    else if (ex instanceof MissingPathVariableException) {
+      return handleMissingPathVariable(
+          (MissingPathVariableException) ex, request, response, handler);
+    }
+    else if (ex instanceof MissingServletRequestParameterException) {
+      return handleMissingServletRequestParameter(
+          (MissingServletRequestParameterException) ex, request, response, handler);
+    }
+    else if (ex instanceof ServletRequestBindingException) {
+      return handleServletRequestBindingException(
+          (ServletRequestBindingException) ex, request, response, handler);
+    }
+    else if (ex instanceof ConversionNotSupportedException) {
+      return handleConversionNotSupported(
+          (ConversionNotSupportedException) ex, request, response, handler);
+    }
+    else if (ex instanceof TypeMismatchException) {
+      return handleTypeMismatch(
+          (TypeMismatchException) ex, request, response, handler);
+    }
+    else if (ex instanceof HttpMessageNotReadableException) {
+      return handleHttpMessageNotReadable(
+          (HttpMessageNotReadableException) ex, request, response, handler);
+    }
+    else if (ex instanceof HttpMessageNotWritableException) {
+      return handleHttpMessageNotWritable(
+          (HttpMessageNotWritableException) ex, request, response, handler);
+    }
+    else if (ex instanceof MethodArgumentNotValidException) {
+      return handleMethodArgumentNotValidException(
+          (MethodArgumentNotValidException) ex, request, response, handler);
+    }
+    else if (ex instanceof MissingServletRequestPartException) {
+      return handleMissingServletRequestPartException(
+          (MissingServletRequestPartException) ex, request, response, handler);
+    }
+    else if (ex instanceof BindException) {
+      return handleBindException((BindException) ex, request, response, handler);
+    }
+    else if (ex instanceof NoHandlerFoundException) {
+      return handleNoHandlerFoundException(
+          (NoHandlerFoundException) ex, request, response, handler);
+    }
+    else if (ex instanceof AsyncRequestTimeoutException) {
+      return handleAsyncRequestTimeoutException(
+          (AsyncRequestTimeoutException) ex, request, response, handler);
+    }
+  }
+  catch (Exception handlerEx) {
+    if (logger.isWarnEnabled()) {
+      logger.warn("Failure while trying to resolve exception [" + ex.getClass().getName() + "]", handlerEx);
+    }
+  }
+  return null;
+}
+```
 
 ## ResponseStatusExceptionResolver
 
+``@ResponseStatus`` 어노테이션을 사용하여 예외를 HTTP 상태 코드에 매핑하는 ``HandlerExceptionResolver`` 구현체로 스프링 v5.0부터는 ``ResponseStatusException`` 예외도 함께 처리합니다. 
+
+```java
+@Override
+@Nullable
+protected ModelAndView doResolveException(
+    HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
+
+  try {
+    if (ex instanceof ResponseStatusException) {
+      return resolveResponseStatusException((ResponseStatusException) ex, request, response, handler);
+    }
+
+    ResponseStatus status = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+    if (status != null) {
+      return resolveResponseStatus(status, request, response, handler, ex);
+    }
+
+    if (ex.getCause() instanceof Exception) {
+      return doResolveException(request, response, handler, (Exception) ex.getCause());
+    }
+  }
+  catch (Exception resolveEx) {
+    if (logger.isWarnEnabled()) {
+      logger.warn("Failure while trying to resolve exception [" + ex.getClass().getName() + "]", resolveEx);
+    }
+  }
+  return null;
+}
+```
+
+위 코드에서 알 수 있듯이 발생한 예외 클래스가 ``ResponseStatusException`` 인스턴스인지 확인하고, ``AnnotatedElementUtils.findMergedAnnotation()`` 메소드를 통해 ``@ResponseStatus`` 어노테이션으로 마킹된 타겟의 속성값을 찾아 예외 처리합니다. 
+``@ResponseStatus`` 어노테이션같은 경우는 직접 입력해야하기 때문에 라이브러리의 예외 코드 같은 곳에는 작성할 수 없으며, 개발자가 조건에 따라 동적으로 직접 처리해야하는 부분은 ``ResponseStatusException``을 사용하면 ``ResponseStatusExceptionResolver``가 예외 처리를 진행합니다.    
+
 ## ExceptionHandlerExceptionResolver
+
+``ExceptionHandlerExceptionResolver``는 스프링에서 관리되는 ``ExceptionResolver``들 중에서 우선 순위가 가장 높은 객체로, ``@ExceptionHandler`` 어노테이션을 처리하기 위한 ``ExceptionResolver``입니다. 
+
+먼저 ``@ExceptionHandler`` 어노테이션은 예외 클래스들의 속성을 받아 처리할 예외를 지정합니다. 
+예외 클래스를 지정하지 않는다면, 어노테이션이 선언된 메소드의 인자로 설정한 예외를 처리합니다. 
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ExceptionHandler {
+
+	/**
+	 * Exceptions handled by the annotated method. If empty, will default to any
+	 * exceptions listed in the method argument list.
+	 */
+	Class<? extends Throwable>[] value() default {};
+
+}
+```
+
+또한 ``@ResponseStatus``를 사용하여 HTTP 상태 코드를 지정할 수 있습니다. 
+
+다음은 ``@ExceptionHandler`` 어노테이션의 사용 예시입니다. 
+
+```java
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ExceptionHandler
+public ErrorResult illegalExHandle(IllegalArgumentException e) {
+    return new ErrorResult(404, e.getMessage());
+}
+
+static class ErrorResult {
+  private int code;
+  private String message;
+  
+  public ErrorResult(String code, String message) {
+    this.code = code;
+    this.message = message;
+  }
+}
+```
 
 ### @ControllerAdvice
 
