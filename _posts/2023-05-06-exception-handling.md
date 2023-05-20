@@ -355,7 +355,7 @@ static class ErrorResult {
 ### @ControllerAdvice & @RestControllerAdvice
 
 ``@ExceptionHandler``을 전역적으로 사용하기 위해 스프링 v3.2(``@ControllerAdvice``), v4.3(``@RestControllerAdvice``) 부터 지원하게된 어노테이션입니다. 
-두 개의 어노테이션은 각각 Controller, RestController 처리해주는 점에 있어서 다르다. 
+두 개의 어노테이션은 각각 Controller, RestController 처리해주는 점에 있어서 다릅니다. 
 
 주의 할 점으로는 
 - **특정 예외 클래스**를 처리할 ``ControllerAdvice``를 작성할 때는 스프링에서 이미 구현 해놓은 ``ExceptionHandler``가 있는지 확인 후 구현해야합니다. 클라이언트에게 일관된 에러 응답을 제공하기 위해 해당 ``ExceptionHandler``를 상속 받아 메소드 오버라이딩을 하는 등 후속 처리가 필수입니다. 
