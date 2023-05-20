@@ -357,12 +357,33 @@ static class ErrorResult {
 ``@ExceptionHandler``을 전역적으로 사용하기 위해 스프링 v3.2(``@ControllerAdvice``), v4.3(``@RestControllerAdvice``) 부터 지원하게된 어노테이션입니다. 
 두 개의 어노테이션은 각각 Controller, RestController 처리해주는 점에 있어서 다릅니다. 
 
-주의 할 점으로는 
+#### ControllerAdvice 동작 원리
+
+![process-dispatch-result](/assets/img/spring/mvc/exception-handling/process-dispatch-result.png)  
+
+먼저 ``DispatcherServlet``에서 예외를 캐치한 후 예외를 처리하기 위한 메소드가 실행이 됩니다. 
+
+![get-exception-handler-method](/assets/img/spring/mvc/exception-handling/get-exception-handler-method.png)  
+
+그 후 ``ExceptionHandlerExceptionResolver``가 해당 예외를 처리하기 위해 위임받으며, 전달 받은 예외에 대한 ``@ExceptionHandler`` 메소드를 찾습니다. 
+기본 설정은 컨트롤러 클래스 계층에서 메소드를 먼저 찾으며, 없는 경우에는 스프링 빈 ``ControllerAdvice``를 찾습니다. 
+
+![do-resolve-handler-method-exception](/assets/img/spring/mvc/exception-handling/do-resolve-handler-method-exception.png)  
+
+정상적으로 ``@ExceptionHandler`` 메소드를 찾았다면, 메소드 실행에 필요한 ``arguementResolvers, returnValueHandlers...`` 세팅과 같은 사전 작업을 진행 후 리플랙션을 활용해 메소드를 실행시킵니다. 
+
+![invoke-and-handle](/assets/img/spring/mvc/exception-handling/invoke-and-handle.png)  
+
+![do-resolve-handler-method-exception](/assets/img/spring/mvc/exception-handling/do-resolve-handler-method-exception.png)  
+
+리스폰즈 설정까지 마친 후 최종으로 설정된 ``ModelAndView`` 값에 따라 후속 조치를 한 후 클라이언트의 요청을 종료하고 예외를 반환하게 됩니다. 
+
+마지막으로 ``ControllerAdivce``를 사용하는데 있어 주의할 점으로는 아래와 같습니다.  
+
 - **특정 예외 클래스**를 처리할 ``ControllerAdvice``를 작성할 때는 스프링에서 이미 구현 해놓은 ``ExceptionHandler``가 있는지 확인 후 구현해야합니다. 클라이언트에게 일관된 에러 응답을 제공하기 위해 해당 ``ExceptionHandler``를 상속 받아 메소드 오버라이딩을 하는 등 후속 처리가 필수입니다. 
 - 여러개의 ``ControllerAdvice``를 구현해놓았다면, basePackages를 설정해 적용 범위를 제한해야합니다. 설정한 basePackages는 해당 패키지와 그 하위에 있는 컨트롤러가 대상이 됩니다. 또 여러 ControllerAdvice가 있을 때 스프링은 ``@Order나 @Priority`` 어노테이션을 기준으로 정렬되며, 순서를 지정하지 않는다면 스프링은 임의의 순서로 처리할 수 있으므로 주의해야합니다. 
 
 ``@ControllerAdvice & @RestControllerAdvice``를 통해 하나의 클래스로 모든 컨터롤러의 예외 처리를 전역적으로 수행할 수 있게 됐으며, 컨트롤러 클래스는 메인 로직과 관련된 코드만이 존재하게 됩니다. 
 관심사 분리를 통해 각각의 클래스에는 각자의 관심사에만 집중할 수 있으며, 이는 관리가 용이해지고 코드의 가독성을 향상시킴으로써 이점을 얻을 수 있게 됐습니다. 
-
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
