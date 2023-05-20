@@ -323,31 +323,46 @@ public @interface ExceptionHandler {
 }
 ```
 
-또한 ``@ResponseStatus``를 사용하여 HTTP 상태 코드를 지정할 수 있습니다. 
+``@ExceptionHandler``는 몇가지 어노테이션과 함께 사용 할 수 있는데, 
+``@ResponseStatus``를 사용하여 HTTP 상태 코드를 지정할 수 있고 ``@ResponseBody``를 사용하여 반환 타입을 json 형태로 반환 할 수도 있습니다.  
 
 다음은 ``@ExceptionHandler`` 어노테이션의 사용 예시입니다. 
 
 ```java
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 @ExceptionHandler
-public ErrorResult illegalExHandle(IllegalArgumentException e) {
-    return new ErrorResult(404, e.getMessage());
+public ErrorResult handleException(Exception e) {
+    return new ErrorResult(500, e.getMessage());
 }
 
 static class ErrorResult {
   private int code;
   private String message;
   
-  public ErrorResult(String code, String message) {
+  public ErrorResult(int code, String message) {
     this.code = code;
     this.message = message;
   }
 }
 ```
 
-### @ControllerAdvice
+``@ExceptionHandler``은 처리할 예외 클래스를 배열로 지정해 다양한 예외 클래스들을 한 번에 처리할 수 있으며, 지정한 부모 예외 클래스는 **자식 예외 클래스**도 함께 처리할 수 있습니다.  
+하지만 자식 예외 클래스 예외 처리 메소드가 구현이 되어 있다면 당연히 자식 예외 클래스가 우선 처리됩니다. 
 
-### @RestControllerAdvice
+``@ExceptionHandler``는 위와 같이 다양한 예외 클래스들을 보다 더 깔끔하고 명시적으로 예외처리를 할 수 있도록 도와주지만, 컨트롤러에 구현해야하기 때문에 특정 컨트롤러에서만 발생하는 예외만을 처리할 수 있습니다. 
+컨트롤러에 정상 로직 코드와 에러 처리 코드가 섞이기 때문에 스프링에서는 전역적으로 예외를 처리할 수 있는 추가적인 기능을 제공합니다.  
+
+### @ControllerAdvice & @RestControllerAdvice
+
+``@ExceptionHandler``을 전역적으로 사용하기 위해 스프링 v3.2(``@ControllerAdvice``), v4.3(``@RestControllerAdvice``) 부터 지원하게된 어노테이션입니다. 
+두 개의 어노테이션은 각각 Controller, RestController 처리해주는 점에 있어서 다르다. 
+
+주의 할 점으로는 
+- **특정 예외 클래스**를 처리할 ``ControllerAdvice``를 작성할 때는 스프링에서 이미 구현 해놓은 ``ExceptionHandler``가 있는지 확인 후 구현해야합니다. 클라이언트에게 일관된 에러 응답을 제공하기 위해 해당 ``ExceptionHandler``를 상속 받아 메소드 오버라이딩을 하는 등 후속 처리가 필수입니다. 
+- 여러개의 ``ControllerAdvice``를 구현해놓았다면, basePackages를 설정해 적용 범위를 제한해야합니다. 설정한 basePackages는 해당 패키지와 그 하위에 있는 컨트롤러가 대상이 됩니다. 또 여러 ControllerAdvice가 있을 때 스프링은 ``@Order나 @Priority`` 어노테이션을 기준으로 정렬되며, 순서를 지정하지 않는다면 스프링은 임의의 순서로 처리할 수 있으므로 주의해야합니다. 
+
+``@ControllerAdvice & @RestControllerAdvice``를 통해 하나의 클래스로 모든 컨터롤러의 예외 처리를 전역적으로 수행할 수 있게 됐으며, 컨트롤러 클래스는 메인 로직과 관련된 코드만이 존재하게 됩니다. 
+관심사 분리를 통해 각각의 클래스에는 각자의 관심사에만 집중할 수 있으며, 이는 관리가 용이해지고 코드의 가독성을 향상시킴으로써 이점을 얻을 수 있게 됐습니다. 
 
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.  
