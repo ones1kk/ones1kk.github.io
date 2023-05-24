@@ -2,7 +2,7 @@
 title: 스프링 컨테이너(Spring Container)
 date: 2023-05-22 20:10:00 +09:00
 categories: [Spring, Core]
-tags: [spring-container]
+tags: [Spring-Container, Singleton-Container, Configuration, Component, ComponentScan, BeanDefinition]
 ---
 
 # 스프링 컨테이너
@@ -25,7 +25,10 @@ tags: [spring-container]
 
 # 싱글톤 컨테이너 & @Configuration
 
-# @ComponentScan
+# @Component & @ComponentScan
+
+``@Component`` 어노테이션은 스프링 컨테이너에서 관리하는 객체, 즉 스프링 빈으로 등록하는 객체를 나타내기 위해 클래스 레벨에 작성되는 어노테이션입니다. 
+
 
 # BeanDefinition
 
