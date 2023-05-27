@@ -53,6 +53,16 @@ tags: [Spring-Container, Singleton-Container, Configuration, Component, Componen
 
 ### Component Scanning
 
+개발자가 설정한 빈들은 애플리케이션이 구동하기 시작하면서 스프링 컨테이너 내부에 빈들이 저장되어 관리됩니다. 
+빈을 등록하는 방법은 크게 4가지가 있는데, 아래와 같습니다. 
+
+1. 자동 등록: ``@Component`` 어노테이션을 포함한 어노테이션을 클래스에 선언 시, 해당 어노테이션이 명시된 클래스 파일을 찾아 자동으로 등록됩니다. 
+2. 수동 등록(``@Configuration``): ``@Configuration`` 어노테이션을 선언한 자바 클래스 파일은 스프링이 설정 파일로 인식합니다. 해당 설정 파일에 ``@Bean`` 어노테이션이 명시된 메소드들을 스프링은 빈으로 등록하여 관리합니다. 
+3. 수동 등록(XML(Bean)): ``<bean>, <property>`` 태그로 등록할 빈을 지정한다.  
+4. 수동 등록(XML(ComponentScan)): ``<context:component-scan>`` 태그에 지정한 패키지 기준으로 ``@Component`` 어노테이션이 명시된 클래스를 찾아 등록한다.
+
+스프링은 어떤 방법으로 ``@Component`` 어노테이션이 선언되어 있는 클래스 파일을들을 스캔하여 빈으로 등록하는지 코드를 살펴보고자 합니다.  
+
 ``org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter)``
 
 ``org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(
