@@ -40,10 +40,6 @@ tags: [Spring-Container, Singleton-Container, Configuration, Component, Componen
 이 때 스프링은 ``CGLIB``라는 바이트 코드를 조작하는 라이브러리를 사용해 자바 설정 파일을 상속받은 임의의 다른 클래스를 만들고, ``SingletonBeanRegistry.registerSingleton()`` 메소드를 통해 그 다른 클래스를 스프링 빈으로 등록합니다. 
 > 스프링 v2.2.0부터 ``CGLIB`` 기술이 안정화 되었다고 판단해, 기본 프록시 생성 방식으로 지정됐습니다.
 
-필드 대신에 자바에서 공유되지 않는, 지역변수, 파라미터, ThreadLocal 등을 사용해야 한다.
-스프링 빈의 필드에 공유 값을 설정하면 정말 큰 장애가 발생할 수 있다!!!
-
-
 이를 통해, 스프링 컨테이너는 싱글톤 패턴의 장점을 활용하여 객체를 유지하고 단점으로 여겨지는 부분을 해결해 싱글톤 컨테이너로서 유지되며 관리됩니다.  
 
 # @Component & @ComponentScan
@@ -127,10 +123,5 @@ Java 설정 파일, XML 파일, 프로퍼티 파일, 관계형 DB 설정을 불�
 - ``constructor arguments, properties`` : 의존 관계 주입에서 사용될 값 
 
 ![bean-definition-object-example](/assets/img/spring/core/spring-container/bean-definition-object-example.png)
-
-
-# 스프링 컨테이너 생성 과정
-
-1.
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
