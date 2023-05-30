@@ -2,7 +2,7 @@
 title: DL(Dependency Lookup)
 date: 2023-05-30 21:50:00 +09:00
 categories: [ Spring, Core ]
-tags: [ DL, Dependency-Lookup ]
+tags: [ DL, Dependency-Lookup, ObjectFactory, ObjectProvider, JSR-330 Provider ]
 ---
 
 # 의존성 조회(Dependency Lookup: DL)이란?
@@ -12,10 +12,9 @@ IoC 컨테이너가 객체의 생성과 의존성 주입을 담당하는 의존�
 DL은 문맥별 의존성 조회(Contextualized Dependency Lookup: CDL)를 사용하여 의존성을 조회하는데, 이는 결국 스프링에서 관리하는 컨택스트인 ``ApplicationContext``를
 기반으로 빈과 빈들의 의존성을 조회한다는 뜻입니다.
 즉, 특정 설정 파일에서 의존성에 사용할 인스턴스를 가져오는 DI와 달리 DL은 자원을 관리하는 ``Context(Container)``에서 의존성을 가져오며, 항상 수행되는 것이 아닌 개발자가 필요한 시점에
-가져오는 것이 가장 큰 특징입니다. 
+가져오는 것이 가장 큰 특징입니다.
 
 # DL의 동작 코드
-
 
 # 의존 관계를 조회하는 방법
 

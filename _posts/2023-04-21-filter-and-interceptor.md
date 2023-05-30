@@ -43,7 +43,8 @@ public interface Filter {
 
 1. init: 서블릿 컨테이너는 필터를 인스턴스화한 후 정확히 한 번 init 메서드를 호출합니다. 필터가 필터링 작업을 수행하도록 요청받기 전에 init 메서드가 성공적으로 완료되어야 합니다.
 2. doFilter: 리소스에 대한 클라이언트 요청으로 요청/응답 쌍이 체인을 통과할때마다 웹 컨테이너에 의해 호출됩니다.
-3. destory: 이 메서드는 필터의 doFilter 메서드 내의 모든 스레드가 종료되었거나 시간 초과 기간이 경과한 후에만 호출됩니다. 웹 컨테이너가 필터에 의해 호출되어 필터가 서비스를 중단하고 있음을 나타냅니다.
+3. destory: 이 메서드는 필터의 doFilter 메서드 내의 모든 스레드가 종료되었거나 시간 초과 기간이 경과한 후에만 호출됩니다. 웹 컨테이너가 필터에 의해 호출되어 필터가 서비스를 중단하고 있음을
+   나타냅니다.
 
 # Interceptor
 
@@ -117,16 +118,17 @@ public interface AsyncHandlerInterceptor extends HandlerInterceptor {
 **Servlet 3.0**부터 비동기 처리를 위한 ``` AsyncContext 와 javax.servlet.AsyncListener ```라는 클래스와 인터페이스가 도입되었습니다.  
 ``` AsyncHandlerInterceptor ``` 스프링 MVC에서 비동기 요청 처리 시 필요한 로직을 구현할 수 있도록 지원해주는 클래스입니다.
 
-비동기 요청을 시작하면 ``` DispatcherServlet```은 일반적인 동기 요청 수행처럼 ```postHandle 및 afterCompletion ```을 호출하지 않고 대신 ``` afterConcurrentHandlingStarted ```를 호출하여 서블릿 컨테이너로 넘기기 전에 작업을 진행합니다.
+비동기 요청을 시작하면 ``` DispatcherServlet```은 일반적인 동기 요청 수행처럼 ```postHandle 및 afterCompletion ```을 호출하지 않고
+대신 ``` afterConcurrentHandlingStarted ```를 호출하여 서블릿 컨테이너로 넘기기 전에 작업을 진행합니다.
 
 # 차이
 
-|          -          |           필터(Filter)           |인터셉터(Interceptor)|
-|:-------------------:|:------------------------------:|:---:|
-|      범위(Scope)      |          웹 애플리케이션 전역           |스프링 컨테이너 내부|
-|    위치(Position)     |   ```DispatcherServlet``` 이전   |``` DispatcherServlet ```과 핸들러(컨트롤러) 사이|
-| 구현(Implementation)  |```javax.servlet.Filter``` 인터페이스|``` HandlerInterceptor ``` 인터페이스|
-| 작업 시점(Time of Work) |    웹 애플리케이션 요청 전처리, 응답 후처리     |핸들러(컨트롤러)의 실행 전, 후 또는 뷰의 렌더링 전, 후 |    
+|          -          |            필터(Filter)            |            인터셉터(Interceptor)            |
+|:-------------------:|:--------------------------------:|:---------------------------------------:|
+|      범위(Scope)      |           웹 애플리케이션 전역            |               스프링 컨테이너 내부               |
+|    위치(Position)     |    ```DispatcherServlet``` 이전    | ``` DispatcherServlet ```과 핸들러(컨트롤러) 사이 |
+| 구현(Implementation)  | ```javax.servlet.Filter``` 인터페이스 |    ``` HandlerInterceptor ``` 인터페이스     |
+| 작업 시점(Time of Work) |     웹 애플리케이션 요청 전처리, 응답 후처리      |    핸들러(컨트롤러)의 실행 전, 후 또는 뷰의 렌더링 전, 후    |    
 
 # 결론
 

@@ -6,6 +6,7 @@ tags: [jwt, session, cookie]
 ---
 
 # 들어가기에 앞서
+
 서버에서 보안, 인증, 권한 부여 등을 확인하고 관리하는 방식은 대표적으로 **쿠키, 세션, 토큰 3가지**가 있습니다.  
 이 글에서는 3가지 방식(토큰은 JWT 기반)에 대해서 알아보고자 합니다.  
 추가로 Spring Framework 환경에서는 어떤 방식으로 세션을 처리하는지 간단한 예제와 설명도 함께 작성하도록 하겠습니다.
@@ -13,16 +14,21 @@ tags: [jwt, session, cookie]
 # JWT(JSON Web Token)
 
 ## 역사
+
 JWT는 JSON Web Token의 줄임말로 일반적으로 웹 애플리케이션에서 인증 및 권한 부여 목적으로 사용되는 표준입니다.  
-XML을 이용하여 인터넷을 통해 데이터를 전송하던 2000년대 초, 웹 애플리케이션이 점점 가볍고 이동성이 높은 JSON 데이터 전송 방식을 선호하게 되는 시점과 함께 JWT는 JSON 형식으로 데이터를 안전하게 전송하기 위한 수단으로 개발 되었습니다.
+XML을 이용하여 인터넷을 통해 데이터를 전송하던 2000년대 초, 웹 애플리케이션이 점점 가볍고 이동성이 높은 JSON 데이터 전송 방식을 선호하게 되는 시점과 함께 JWT는 JSON 형식으로 데이터를 안전하게
+전송하기 위한 수단으로 개발 되었습니다.
 
 ## 배경
+
 웹 애플리케이션이 더욱 복잡해지고 여러 사용자가 이용함에 따라 안전하고 명백한 방식으로 웹 애플리케이션을 처리할 필요성이 대두 되었습니다.  
 또한 이전에는 서버가 세션 기반 인증으로 사용하는 것이 일반적이었지만, 이 방법은 확장성, 상태 관리에 어려움을 겪는 문제가 있었습니다.  
 JWT는 상태 비저장, 확장성 및 다양한 플랫폼에서 사용할 수 있는 장점을 필두로 클라이언트에게 토큰을 발급합니다.  
-토큰을 발급 받은 클라이언트는 토큰 자체에 포함된 권한 정보나 서비스를 사용하기 위한 정보(Self-contained)를 이용하기 때문에 따로 서버에 데이터를 저장할 필요 없이 서버에 대한 향후 요청을 할 수 있게 되었습니다.
+토큰을 발급 받은 클라이언트는 토큰 자체에 포함된 권한 정보나 서비스를 사용하기 위한 정보(Self-contained)를 이용하기 때문에 따로 서버에 데이터를 저장할 필요 없이 서버에 대한 향후 요청을 할 수 있게
+되었습니다.
 
 ## 특징
+
 JWT는 Header, Payload, Signature 이렇게 3개의 부분으로 구성되어 있습니다.
 
 각 부분에 대해서 간략하게 설명하자면
@@ -48,7 +54,8 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 > [출처](https://www.ibm.com/docs/en/cics-ts/6.1?topic=cics-json-web-token-jwt)
 
 > 실제 데이터들은 claim(메세지)이라고 불리며, JWT는 JSON을 이용해서 claim을 정의합니다.   
-> JWT는 위 사진 우측의 Header, Payload, Signature 3개의 부분과 같이 JSON 형태로 표현한 것인데, JSON은 개행 문자가 있기 때문에, REST API 호출 시 HTTP Header에 넣기가 불편합니다.  
+> JWT는 위 사진 우측의 Header, Payload, Signature 3개의 부분과 같이 JSON 형태로 표현한 것인데, JSON은 개행 문자가 있기 때문에, REST API 호출 시 HTTP Header에
+> 넣기가 불편합니다.  
 > 그래서 JWT는 claim JSON 문자열을 base64 인코딩을 통해 하나의 문자열로 변환합니다.
 
 아래는 JWT가 Authentication을 처리하는 흐름입니다.
@@ -56,7 +63,8 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 ![token-based-authentication](/assets/img/web/auth/token-based-authentication.jpg)
 > [출처](https://www.freecodecamp.org/news/how-to-sign-and-validate-json-web-tokens/)
 
-위 그림에서 눈 여겨 볼 점은 OAuth와 같은 단순 암호화된 문자열을 들고 있는 방식과 달리, 클라이언트에게 전달 받은 토큰의 내용을 서버 사이드에서 저장 & 관리할 필요 없이 Self-contained한 내용(아이디, 인가 정보 등)을 확인하고 이에 따라 응답만하게 됩니다.
+위 그림에서 눈 여겨 볼 점은 OAuth와 같은 단순 암호화된 문자열을 들고 있는 방식과 달리, 클라이언트에게 전달 받은 토큰의 내용을 서버 사이드에서 저장 & 관리할 필요 없이 Self-contained한 내용(
+아이디, 인가 정보 등)을 확인하고 이에 따라 응답만하게 됩니다.
 
 ## 장점
 
@@ -74,10 +82,13 @@ REST API Server를 Stateless하게 설계하게 되면 얻게 되는 몇 가지 
 
 1. Scalability(확장성): Stateless 서버는 각 요청에 요청을 처리하는 데 필요한 모든 정보가 들어 있으므로 요청은 서버 간에 세션 상태를 동기화할 필요 없이 여러 서버에 분산될 수 있습니다.
 2. Reliability(신뢰성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 안정적입니다. 관리할 세션 상태가 없기 때문에 버그나 오류가 발생할 가능성이 적습니다.
-3. Simplicity(단순성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 설계 및 구현이 간단합니다. 세션 상태에 의존하지 않음으로써 서버 로직을 단순화하여 보다 간단하고 유지관리 가능한 코드베이스로 이어질 수 있습니다.
-4. Caching(캐싱): 상태 비저장 서버는 각 요청에 요청을 처리하는 데 필요한 모든 정보가 포함되어 있기 때문에 프록시 또는 CDN과 같은 중개자가 쉽게 캐시할 수 있습니다. 이렇게 하면 성능이 향상되고 서버 부하가 감소할 수 있습니다.
+3. Simplicity(단순성): 상태 비저장 서버는 세션 상태를 유지하는 서버보다 설계 및 구현이 간단합니다. 세션 상태에 의존하지 않음으로써 서버 로직을 단순화하여 보다 간단하고 유지관리 가능한 코드베이스로
+   이어질 수 있습니다.
+4. Caching(캐싱): 상태 비저장 서버는 각 요청에 요청을 처리하는 데 필요한 모든 정보가 포함되어 있기 때문에 프록시 또는 CDN과 같은 중개자가 쉽게 캐시할 수 있습니다. 이렇게 하면 성능이 향상되고 서버
+   부하가 감소할 수 있습니다.
 
-> 요약하면 REST API 서버를 상태 비저장으로 설계하면 향상된 확장성, 안정성, 단순성 및 캐싱을 포함한 몇 가지 이점을 제공합니다. 각 요청을 독립적으로 처리함으로써 서버는 요청을 보다 효율적으로 처리하도록 설계되어 응답성과 신뢰성이 높은 웹 서비스로 이어질 수 있습니다.
+> 요약하면 REST API 서버를 상태 비저장으로 설계하면 향상된 확장성, 안정성, 단순성 및 캐싱을 포함한 몇 가지 이점을 제공합니다. 각 요청을 독립적으로 처리함으로써 서버는 요청을 보다 효율적으로 처리하도록
+> 설계되어 응답성과 신뢰성이 높은 웹 서비스로 이어질 수 있습니다.
 
 ## 단점
 
@@ -99,13 +110,20 @@ REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요�
 
 ## 특징
 
-1. 상태 저장 통신(Stateful communication): 세션을 사용하면 클라이언트와 서버 간의 상태 저장 통신이 가능하므로 서버는 사용자 ID 및 권한 부여 상태와 같은 클라이언트별 정보를 추적할 수 있습니다.
-2. Session ID(세션 아이디): 클라이언트가 세션을 시작하면 서버는 세션 아이디로 알려진 고유 식별자를 생성하여 쿠키에 저장 후 클라이언트로 다시 보냅니다. 그런 다음 클라이언트는 서버에 대한 각 후속 요청에 이 세션 아이디를 통해서 클라이언트를 식별합니다.
-3. Server-side storage(서버 사이드 저장소): 서버는 일반적으로 서버 측에서 세션 데이터를 메모리 또는 데이터베이스와 같은 저장 메커니즘에 저장합니다. 이렇게 하면 서버가 필요에 따라 세션 데이터를 검색하고 보안을 유지할 수 있습니다.
-4. Expiration and termination(만료 및 종료): 세션이 일정 시간 후에 만료되도록 설정하거나 서버 또는 클라이언트에서 수동으로 종료할 수 있습니다. 이를 통해 보안 위험을 줄이고 세션 데이터가 필요 이상으로 오래 보관되지 않도록 할 수 있습니다.
-5. Session hijacking prevention(세션 가로채기 방지): 세션은 HTTPS와 같은 보안 전송 프로토콜을 사용하고 추측하거나 예측하기 어려운 세션 ID를 생성하여 하이재킹으로부터 보호할 수 있습니다.
-6. Scalability(확장성): 세션은 특히 대규모 분산 시스템에서 확장성 문제를 야기할 수 있습니다. 이러한 문제를 해결하기 위해 일부 REST API Server는 분산 캐싱 및 로드 밸런싱 기술을 사용하여 세션 데이터를 여러 서버에 분산시킵니다.
-7. Impact on performance(성능에 미치는 영향): 세션은 서버 측 저장 및 검색이 필요하므로 REST API 서버의 성능에 영향을 미칠 수 있습니다. 이러한 영향을 최소화하기 위해 일부 REST API 서버는 캐슁 메커니즘을 사용하여 자주 액세스하는 세션 데이터를 메모리에 저장합니다.
+1. 상태 저장 통신(Stateful communication): 세션을 사용하면 클라이언트와 서버 간의 상태 저장 통신이 가능하므로 서버는 사용자 ID 및 권한 부여 상태와 같은 클라이언트별 정보를 추적할 수
+   있습니다.
+2. Session ID(세션 아이디): 클라이언트가 세션을 시작하면 서버는 세션 아이디로 알려진 고유 식별자를 생성하여 쿠키에 저장 후 클라이언트로 다시 보냅니다. 그런 다음 클라이언트는 서버에 대한 각 후속
+   요청에 이 세션 아이디를 통해서 클라이언트를 식별합니다.
+3. Server-side storage(서버 사이드 저장소): 서버는 일반적으로 서버 측에서 세션 데이터를 메모리 또는 데이터베이스와 같은 저장 메커니즘에 저장합니다. 이렇게 하면 서버가 필요에 따라 세션 데이터를
+   검색하고 보안을 유지할 수 있습니다.
+4. Expiration and termination(만료 및 종료): 세션이 일정 시간 후에 만료되도록 설정하거나 서버 또는 클라이언트에서 수동으로 종료할 수 있습니다. 이를 통해 보안 위험을 줄이고 세션 데이터가
+   필요 이상으로 오래 보관되지 않도록 할 수 있습니다.
+5. Session hijacking prevention(세션 가로채기 방지): 세션은 HTTPS와 같은 보안 전송 프로토콜을 사용하고 추측하거나 예측하기 어려운 세션 ID를 생성하여 하이재킹으로부터 보호할 수
+   있습니다.
+6. Scalability(확장성): 세션은 특히 대규모 분산 시스템에서 확장성 문제를 야기할 수 있습니다. 이러한 문제를 해결하기 위해 일부 REST API Server는 분산 캐싱 및 로드 밸런싱 기술을 사용하여
+   세션 데이터를 여러 서버에 분산시킵니다.
+7. Impact on performance(성능에 미치는 영향): 세션은 서버 측 저장 및 검색이 필요하므로 REST API 서버의 성능에 영향을 미칠 수 있습니다. 이러한 영향을 최소화하기 위해 일부 REST
+   API 서버는 캐슁 메커니즘을 사용하여 자주 액세스하는 세션 데이터를 메모리에 저장합니다.
 
 > 전반적으로 세션은 REST API 컨텍스트에서 클라이언트와 서버 간의 상태 저장 통신을 유지하는 데 유용한 메커니즘을 제공할 수 있습니다.   
 > 그러나 일부 복잡성과 성능 오버헤드가 발생할 수 있으므로 신중하게 사용해야 합니다.   
@@ -120,7 +138,8 @@ REST API는 Sateless로 설계 되었으며, 이는 클라이언트의 각 요�
 
 Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용자의 세션과 관련된 데이터를 저장하고 처리합니다.   
 ``` HttpSession ```은 퍼사드 패턴(Facade Pattern)을 사용하여 관리하고 있습니다.
-퍼사드 패턴에서 사용 될 통합 인터페이스로는 ``` StandardSessionFacade ```를 구현하였고 ``` HttpSession ``` 기본 구현체로는 ``` StandardSession ```객체를 구현했습니다.
+퍼사드 패턴에서 사용 될 통합 인터페이스로는 ``` StandardSessionFacade ```를 구현하였고 ``` HttpSession ``` 기본 구현체로는 ``` StandardSession ```객체를
+구현했습니다.
 
 > 퍼사드 패턴(Facade Pattern)이란?  
 > 먼저 퍼사드(Facade)는 프랑스어 Façade 에서 유래된 단어로 건물의 '외관'이라는 뜻입니다.  
@@ -129,12 +148,15 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 
 ### 생성
 
-최초에 ``` HttpSession ``` 을 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 사용하게 되는데, 기본 구현체인 ``` StandardSession ```를 주입받는 ``` StandardSessionFacade ```를 통해 서버내의 세션을 관리하게 됩니다.
+최초에 ``` HttpSession ``` 을 사용하기 위해서는 ``` HttpSession.getSession()  ``` 메소드를 통해서 객체를 생성하여 사용하게 되는데, 기본
+구현체인 ``` StandardSession ```를 주입받는 ``` StandardSessionFacade ```를 통해 서버내의 세션을 관리하게 됩니다.
 
 ![HttpSession-created](/assets/img/web/auth/HttpSession-created.png)
 
 사실 ``` HttpSession.getSession() ``` 을 통해 HttpSession을 생성하기 이전에 많은 일들이 발생합니다.  
-간단하게 작성해 보면 먼저 ``` org.apache.catalina.connector.Request.doGetSession(),  org.apache.catalina.Manager.createSession(sessionId) ``` 메소드를 통해서 실제로 **세션 생성 및 validation**이 이루어 집니다.
+간단하게 작성해 보면
+먼저 ``` org.apache.catalina.connector.Request.doGetSession(), org.apache.catalina.Manager.createSession(sessionId) ```
+메소드를 통해서 실제로 **세션 생성 및 validation**이 이루어 집니다.
 
 ![Request-doGetSession](/assets/img/web/auth/Request-doGetSession.png)
 
@@ -146,7 +168,8 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ![SessionIdGenerator](/assets/img/web/auth/SessionIdGenerator.png)
 
 > 16바이트 길이의 랜덤값을 뽑아서 16진수 32자 문자열을 만듭니다.  
-> 또 ``` generateSessionId() ``` 내부에서 ``` route ```를 인자로 받는 ``` generateSessionId(String) ```메소드를 사용하는데, 해당 인자는 서블릿 컨테이너에 접속한 사용자를 구분하는 값으로 Route나 jvmRoute로 사용됩니다.  
+> 또 ``` generateSessionId() ``` 내부에서 ``` route ```를 인자로 받는 ``` generateSessionId(String) ```메소드를 사용하는데, 해당 인자는 서블릿 컨테이너에
+> 접속한 사용자를 구분하는 값으로 Route나 jvmRoute로 사용됩니다.  
 > Route로 받는 값이 있는 경우 문자열 뒤에 ".route"를 추가하고, 그렇지 않을 경우는 ".jvmRoute"를 추가하게 됩니다.
 
 ![ManagerBase-createSession](/assets/img/web/auth/ManagerBase-createSession.png)
@@ -155,7 +178,8 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 > MaxActiveSession 갯수를 validation 하고, 최초 세션 생성 시(createEmptySession) 세션의 정보(세션 생성 시간, 세션 아이디, 세션 유효 시간 등...)을 설정합니다.
 
 간략하게나마 HttpSession 객체가 어떻게 생성되는지 확인 했습니다.  
-다음은 HttpSession이 제공하는 대표적인 method ``` setAttribute(), getAttribute(), invalidate() ``` 를 통해서, HttpSession 객체는 어떤 식으로 세션을 관리하는지 알아보겠습니다.
+다음은 HttpSession이 제공하는 대표적인 method ``` setAttribute(), getAttribute(), invalidate() ``` 를 통해서, HttpSession 객체는 어떤 식으로 세션을
+관리하는지 알아보겠습니다.
 
 ### 주요 메소드
 
@@ -174,7 +198,7 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 그 후 Session이 expired 되었는지, Session이 클러스터 환경의 여러 JVM에 분산 될 수 있는지 여부를 확인합니다.  
 ![validation-2](/assets/img/web/auth/validation-2.png)
 
-앞의 과정을 걸친 후  최종적으로 ``` attributes ``` 객체에 등록됩니다.  
+앞의 과정을 걸친 후 최종적으로 ``` attributes ``` 객체에 등록됩니다.  
 ![attributes](/assets/img/web/auth/attributes.png)
 
 > ConcurrentHashMap 이란?  
@@ -187,15 +211,15 @@ Spring Framework는 ``` HttpSession ``` 인터페이스를 활용하여 사용�
 ``` setAttribute() ```를 통해 ``` attributes ```에 저장된 객체를 ``` key ``` 이름으로 가져옵니다.   
 ``` attributes.get(key) ``` 이전에 Session이 expired 되었는지 validation을 합니다.
 
-![getAttribute](/assets/img/web/auth/getAttribute.png)   
+![getAttribute](/assets/img/web/auth/getAttribute.png)
 
-##### 서버는 어떻게 클라이언트별 세션 아이디와 서버의 세션 아이디를 확인하는지에 대해  
+##### 서버는 어떻게 클라이언트별 세션 아이디와 서버의 세션 아이디를 확인하는지에 대해
 
 세션 객체가 생성되면 서버는 리스폰즈에 쿠키에 세션 아이디(JSESSIONID) 값을 반환합니다.  
 그 후 클라이언트는 해당 세션 아이디 기반으로 서버에 여러 요청을 하게 됩니다.  
-그렇다면 서버는 어떻게 클라이언트를 식별하고 요청을 처리하는지 알아 보도록 하겠습니다.   
+그렇다면 서버는 어떻게 클라이언트를 식별하고 요청을 처리하는지 알아 보도록 하겠습니다.
 
-예를 들어 다음과 같은 코드가 있다고 가정했을때, 해당 URL을 호출해봅니다.  
+예를 들어 다음과 같은 코드가 있다고 가정했을때, 해당 URL을 호출해봅니다.
 
 ```java
 @RestController
@@ -210,32 +234,37 @@ public class SampleController {
 }
 ```
 
-최초에 클라이언트가 서버에 요청하게 되면 먼저 ``` org.apache.catalina.connector.CoyoteAdapter ```는  ``` postParseRequest(rg.apache.coyote.Request, Request, org.apache.coyote.Response,
-Response) ``` 메소드를 통해 HTTP 헤더 구문을 분석합니다.  
+최초에 클라이언트가 서버에 요청하게 되면 먼저 ``` org.apache.catalina.connector.CoyoteAdapter ```
+는  ``` postParseRequest(rg.apache.coyote.Request, Request, org.apache.coyote.Response,
+Response) ``` 메소드를 통해 HTTP 헤더 구문을 분석합니다.
 
 ![post-parse-request](/assets/img/web/auth/post-parse-request.png)
 
-그 중 내부 메소드 중 ``` parseSessionCookiesId(org.apache.catalina.connector.Request) ```는 쿠키에 있는 세션 아이디를 찾아 ``` org.apache.catalina.connector.Request ``` 요청 세션 아이디로 저장합니다.  
+그 중 내부 메소드 중 ``` parseSessionCookiesId(org.apache.catalina.connector.Request) ```는 쿠키에 있는 세션 아이디를
+찾아 ``` org.apache.catalina.connector.Request ``` 요청 세션 아이디로 저장합니다.
 
-![parse-session-cookies-id](/assets/img/web/auth/parse-session-cookies-id.png)   
+![parse-session-cookies-id](/assets/img/web/auth/parse-session-cookies-id.png)
 
 ``` parseSessionCookiesId(org.apache.catalina.connector.Request) ```를 통해 요청 세션 아이디를 저장합니다.  
-내부에 저장된 세션 아이디를 사용하여 ``` org.apache.catalina.connector.Request ```는 ``` org.apache.catalina.Manager ```에게 해당 세션 아이디를 가지는 객체가 있는지 찾는 요청을 보냅니다.  
+내부에 저장된 세션 아이디를 사용하여 ``` org.apache.catalina.connector.Request ```는 ``` org.apache.catalina.Manager ```에게 해당 세션 아이디를 가지는
+객체가 있는지 찾는 요청을 보냅니다.
 
-![call-find-session](/assets/img/web/auth/call-find-session.png)  
+![call-find-session](/assets/img/web/auth/call-find-session.png)
 
-요청하게 되면 ``` org.apache.catalina.Manager ```의 기본 구현체인  ``` org.apache.catalina.session.ManagerBase.findSession(String) ```이 동작하게 됩니다.  
+요청하게 되면 ``` org.apache.catalina.Manager ```의 기본
+구현체인  ``` org.apache.catalina.session.ManagerBase.findSession(String) ```이 동작하게 됩니다.
 
 ![find-session](/assets/img/web/auth/find-session.png)
 
-결과적으로 세션 아이디가 일치한 세션 객체를 찾아 클라이언트를 식별하게 됩니다.  
-> 세션 아이디가 서버의 ```` ConcurrentHashMap.sessions ````에 존재하지 않는다면, 서버는 새로운 세션 객체를 생성해서 반환하게 됩니다. 
+결과적으로 세션 아이디가 일치한 세션 객체를 찾아 클라이언트를 식별하게 됩니다.
+> 세션 아이디가 서버의 ```` ConcurrentHashMap.sessions ````에 존재하지 않는다면, 서버는 새로운 세션 객체를 생성해서 반환하게 됩니다.
 > 하지만 해당 세션의 attributes에 값은 존재하지 않습니다.
 
 
-그 후 클라이언트의 세션 아이디로 식별된 세션 객체는 ``` org.apache.catalina.authenticator.AuthenticatorBase ```에서 클라이언트의 인증 정보를 확인하고, 인증이 필요한 리소스에 대한 접근을 허용하거나 거부하는 등의 인증 처리를 처리합니다.     
+그 후 클라이언트의 세션 아이디로 식별된 세션 객체는 ``` org.apache.catalina.authenticator.AuthenticatorBase ```에서 클라이언트의 인증 정보를 확인하고, 인증이 필요한
+리소스에 대한 접근을 허용하거나 거부하는 등의 인증 처리를 처리합니다.
 
-![authentication-invoke](/assets/img/web/auth/authentication-invoke.png)  
+![authentication-invoke](/assets/img/web/auth/authentication-invoke.png)
 
 위 과정이 모두 문제 없이 완료된다면, 정상적으로 ``` SampleController ```에 클라이언트 요청이 정상적으로 도착하여, 추가 로직을 수행할 수 있게 됩니다.
 
@@ -243,7 +272,7 @@ Response) ``` 메소드를 통해 HTTP 헤더 구문을 분석합니다.
 
 > 해당 세션 객체를 무효화한 다음, 바인딩 된 모든 객체를 제거합니다.
 
-먼저 	``` invalidate() ``` 메소드에서 유효한 session을 확인 후, 내부의 ``` expire() ``` 메소드를 호출합니다.    
+먼저  ``` invalidate() ``` 메소드에서 유효한 session을 확인 후, 내부의 ``` expire() ``` 메소드를 호출합니다.    
 ![invalidate](/assets/img/web/auth/invalidate.png)
 
 그리고 해당 세션 객체를 비활성화 하는데 필요한 내부 처리를 수행합니다.  
@@ -251,17 +280,18 @@ Response) ``` 메소드를 통해 HTTP 헤더 구문을 분석합니다.
 
 ![remove](/assets/img/web/auth/remove.png)
 
-Session 객체들을 관리하는 인터페이스 ``` org.apache.catalina.Manager ```의 기본 구현체 ``` org.apache.catalina.session.ManagerBase ```에서 식별된 해당 세션 객체를 제거(remove)합니다.
+Session 객체들을 관리하는 인터페이스 ``` org.apache.catalina.Manager ```의 기본 구현체 ``` org.apache.catalina.session.ManagerBase ```에서
+식별된 해당 세션 객체를 제거(remove)합니다.
 
 결과적으로 ``` org.apache.catalina.session.ManagerBase ```의 ``` sessions ```의 사이즈는 0이 됩니다.  
 ![result-of-sessions](/assets/img/web/auth/result-of-sessions.png)
-
 
 # 쿠키(Cookie)
 
 ## 배경
 
-World Wide Web(WWWW)이 초기 단계였던 1994년, 넷스케이프(Netscape Communications Corporation)의 개발자였던 루 몬툴리(Lou Montuli)가 사용자의 컴퓨터에 소량의 데이터를 저장하는 방법으로 쿠키의 개념을 도입했습니다.  
+World Wide Web(WWWW)이 초기 단계였던 1994년, 넷스케이프(Netscape Communications Corporation)의 개발자였던 루 몬툴리(Lou Montuli)가 사용자의 컴퓨터에 소량의
+데이터를 저장하는 방법으로 쿠키의 개념을 도입했습니다.  
 쿠키는 웹 사이트 또는 웹 응용 프로그램에 의해 사용자의 장치에 저장되는 작은 텍스트 파일(4KB이하)입니다.   
 사용자가 웹 사이트를 방문할 때 웹 사이트는 쿠키를 사용자의 브라우저로 보낼 수 있으며, 브라우저는 쿠키를 사용자의 장치에 저장합니다.
 
@@ -301,7 +331,7 @@ Spring Framework에서는 ``` javax.servlet.http.Cookie ```를 활용해서 Cook
 생성된 ``` Cookie ``` 객체는 아래와 같이 다양한 메소드들을 제공하지만 주요 메소드 ``` setMaxAge(), setPath()``` 만 살펴 보겠습니다.     
 ![cookie-method](/assets/img/web/auth/cookie-method.png)
 
->  ``` Cookie ``` 객체는 ``` HttpSession ``` 객체에서 제공해주는 ``` invalidate ```와 같은 제거 전용 메소드가 없습니다.
+> ``` Cookie ``` 객체는 ``` HttpSession ``` 객체에서 제공해주는 ``` invalidate ```와 같은 제거 전용 메소드가 없습니다.
 
 ### 주요 메소드
 
@@ -319,6 +349,7 @@ Spring Framework에서는 ``` javax.servlet.http.Cookie ```를 활용해서 Cook
 쿠키 경로에는 쿠키를 설정하는 서블릿이 포함되어야 합니다.
 
 # 마치며
+
 이렇게 서버에서 보안, 인증, 권한 부여 등을 어떤 방법으로 처리할 수 있는지 확인했습니다.    
 위에 서술 된 순서는 적용된 역사의 역순으로 작성 되었습니다.   
 원래 의도한 바는 각각의 방식이 과거 기술의 어떤 부분을 보완하여 사용하였는지를 나타내기 위해 시간적 역순의 형태로 작성했습니다만 의도대로 작성 되었는지에 대해서는 저 스스로에게 의구심이 듭니다.  
