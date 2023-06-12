@@ -102,6 +102,19 @@ public interface Provider<T> {
 
 ## @Lookup
 
-# ObjectProvider의 동작 코드
+# ObjectProvider 동작 코드
+
+## Provider 동작 코드 
+
+``JSR-330``의 ``javax.inject.Provider``를 처리하기 위해 스프링은 내부적으로  ``javax.inject`` API에 대한 Hard Dependency를
+방지하기 위해 ``org.springframework.beans.factory.support.DefaultListableBeanFactory``의 내부 클래스로 분리하여 구현했습니다. 
+
+> Separate inner class for avoiding a hard dependency on the javax.inject API. 
+> Actual javax.inject.Provider implementation is nested here in order to make it invisible for Graal's introspection of DefaultListableBeanFactory's nested classes.  
+ 
+![inner-provider.png](/assets/img/spring/core/dependency-lookup/inner-provider.png)   
+
+또한 빈을 조회하는 것은 기존 ``DefaultListableBeanFactory``에 구현된 ``doResolveDependency()`` 메소드를 통해 ``context``에 접근, 빈을 조회한 후 반환하게 됩니다.   
+
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
