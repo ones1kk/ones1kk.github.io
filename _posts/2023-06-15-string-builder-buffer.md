@@ -69,7 +69,7 @@ public final class String
 ``intern()`` 메소드는 String Constant Pool에 해당 문자열이 있는지 ``equals()`` 메소드를 통해 판별하고 없으면 상수 풀에 저장한 후 참조값을 전달하고, 있으면 기존 Pool에 있는
 참조 값을 넘겨줍니다.
 해당 메소드는 강제로 String Constant Pool에 넣기 때문에 동적으로 생성되는 문자열에 ``intern()`` 메소드를 사용하게 된다면 OOM(OutOfMemory) 에러가 발생합니다.
-즉, 메모리 누수 발생 가능성을 높이는 메소드이므로 사용에는 주의를 필요로합니다.
+즉, 메모리 누수 발생 가능성을 높이는 메소드이므로 사용에 주의를 필요로합니다.
 
 ## Immutability
 
@@ -86,7 +86,7 @@ public final class String
 
 생성자를 통해 객체를 생성하면 일반적인 객체와 같이 Heap 영역에 새로운 객체를 생성하여 저장합니다.
 하지만 리터럴을 사용하여 객체를 생성하는 경우, 해당 문자열은 String Constant Pool에 저장이 되고 이미 존재하는 문자열이라면 기존에 생성한 객체를 반환합니다.
-때문에 특별한 경우가 아니라면 ``String`` 객체는 생성자를 통한 생성은 지양해야합니다.  
+때문에 특별한 경우가 아니라면 생성자를 통한 생성은 지양해야합니다.  
 
 ![string-pool-concept](/assets/img/language/java/string/string-pool-concept.png)
 > [출처](https://www.geeksforgeeks.org/how-to-initialize-and-compare-strings-in-java/)
