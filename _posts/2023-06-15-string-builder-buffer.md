@@ -94,13 +94,38 @@ public final class String
 
 # StringBuilder & StringBuffer
 
-``StringBuilder`` 와 ``StringBuffer``는 불변 객체인 ``String``을 처리하기 위해 사용되는 클래스입니다.
-이 두 클래스는 문자열 추가, 수정, 삭제 등 동적으로 조작할 수 있는 메소드를 제공하는 클래스입니다.
-일반적인 ``String`` 객체르
+``String``은 불변 객체로 한번 할당된 후 변경할 수 없기 때문에, 다른 값에 대한 연산에는 많은 시간과 자원을 사용한다는 단점이 있습니다.
 
+예를 들어 단지 값을 추가하는 코드지만 실제로는 서로 다른 참조값을 가지는 2개의 객체가 생성이됩니다.
 
-## 공통점
+```java
+    public static void main(String[] args) {
+        String str1 = "a";
+        String str2 = "a" + "b";
 
-## 차이점
+        System.out.println(str1 == str2); // false
+    }
+```
+
+추가로 덧셈(+) 연산자를 통해 문자열을 결합한다는 것 또한 새로운 ``String`` 객체를 생성하게 되어 많은 자원 사용때문에 속도가 느려진다는 단점이 있습니다.
+
+```java
+    public static void main(String[] args) {
+        String str1 = "a";
+        str1 += "b";
+        str1 += "c";
+    }
+```
+
+이런 문제점들을 해결하기 위해 문자열 연산에 특화된 기능을 제공하는 ``StringBuilder`` 와 ``StringBuffer``가 등장하게 되었습니다.
+이 둘은 가변(mutable)하는 문자열을 처리하기 위한 클래스로 불변 객체인 ``String``을 문자열 추가, 수정, 삭제 등 동적으로 조작할 수 있는 메소드를 제공합니다.
+
+## AbstractStringBuilder
+
+``AbstractStringBuilder``는 ``StringBuilder`` 와 ``StringBuffer``의 핵심 기능을 추상화한 클래스로, 문자열 조작에 필요한 기본적인 동작과 메서드를 제공합니다.
+
+## StringBuilder 
+
+## StringBuffer
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
