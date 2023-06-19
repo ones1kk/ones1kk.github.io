@@ -29,9 +29,10 @@ Java에서 동적으로 객체를 생성하게 되면 객체(참조값)를 메�
 String Constant Pool은 자바의 문자열 상수를 관리하기 위해 사용되는 특별한 메모리 영역입니다.
 내부적으로 각 String Constant를 hashing하여 key로 value를 조회하기때문에 탐색에서 좋은 성능을 보여줍니다.
 과거 버전 Java의 String Constant Pool은 Permenent Generation에 있어 고정된 크기의 저장 공간이였기 때문에 OOM(OutOfMemory) 제약이 있었지만,
-버전이 업그레이드 되면서 위치가 Heap 영역에서 Metaspace 영역으로 이동됐습니다. 
+버전이 업그레이드 되면서 위치가 Heap 영역에서 Metaspace 영역으로 이동됐습니다.
 
-> Metaspace 영역은 JVM의 Native Memory를 사용하며 JVM이 관리합니다. Perm영역과의 결정적인 차이는 메모리가 동적으로 관리되며 필요할 경우 OS에게 요청하여 메모리를 추가 할당할 수 있습니다. 
+> Metaspace 영역은 JVM의 Native Memory를 사용하며 JVM이 관리합니다. Perm영역과의 결정적인 차이는 메모리가 동적으로 관리되며 필요할 경우 OS에게 요청하여 메모리를 추가 할당할 수
+> 있습니다.
 
 1. Java 6 이전: String Constant Pool은 클래스와 관련된 메타 데이터를 저장하는 JVM의 메모리 영역의 Permanent Generation 저장되었습니다.
 2. Java 7: Permanent Generation이 아닌 Heap 영역에 저장하면서 메모리 관리 측면에서 유연성을 높혔습니다.
@@ -86,13 +87,20 @@ public final class String
 
 생성자를 통해 객체를 생성하면 일반적인 객체와 같이 Heap 영역에 새로운 객체를 생성하여 저장합니다.
 하지만 리터럴을 사용하여 객체를 생성하는 경우, 해당 문자열은 String Constant Pool에 저장이 되고 이미 존재하는 문자열이라면 기존에 생성한 객체를 반환합니다.
-때문에 특별한 경우가 아니라면 생성자를 통한 생성은 지양해야합니다.  
+때문에 특별한 경우가 아니라면 생성자를 통한 생성은 지양해야합니다.
 
 ![string-pool-concept](/assets/img/language/java/string/string-pool-concept.png)
 > [출처](https://www.geeksforgeeks.org/how-to-initialize-and-compare-strings-in-java/)
 
-# StringBuilder
+# StringBuilder & StringBuffer
 
-# StringBuffer
+``StringBuilder`` 와 ``StringBuffer``는 불변 객체인 ``String``을 처리하기 위해 사용되는 클래스입니다.
+이 두 클래스는 문자열 추가, 수정, 삭제 등 동적으로 조작할 수 있는 메소드를 제공하는 클래스입니다.
+일반적인 ``String`` 객체르
+
+
+## 공통점
+
+## 차이점
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
