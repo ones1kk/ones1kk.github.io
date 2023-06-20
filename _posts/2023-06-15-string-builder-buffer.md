@@ -159,6 +159,7 @@ public final class String
 추가로 매개 변수로 용량(capacity)을 받는 생성자 같은 경우는 ``COMPACT_STRINGS``의 활성화 여부에 따라 문자열 데이터에 사용할 인코딩을 설정합니다.
 
 > 기본적으로 ``COMPACT_STRINGS``는 비활성화 되어 있지만 JVM 플래그를 통해 활성화 할 수 있습니다.
+> ``java -XX:+CompactStrings ${APP_NAME}``
 
 ``COMPACT_STRINGS``가 활성화 되어 있다면 문자열 데이터를 단일 바이트로 처리하기 위한 인코딩으로 ``LATIN1``이 설정됩니다.
 비활성화 상태라면 ``UTF-16`` 문자열 데이터를 2 바이트 처리하는 인코딩으로 설정됩니다.
