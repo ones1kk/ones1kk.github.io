@@ -3,6 +3,7 @@ title: String & StringBuilder & StringBuffer
 date: 2023-06-16 00:40:01 +09:00
 categories: [ Language, Java ]
 tags: [ String, StringBuilder, StringBuffer ]
+math: true
 ---
 
 # String
@@ -123,8 +124,74 @@ public final class String
 ## AbstractStringBuilder
 
 ``AbstractStringBuilder``는 ``StringBuilder`` 와 ``StringBuffer``의 핵심 기능을 추상화한 클래스로, 문자열 조작에 필요한 기본적인 동작과 메서드를 제공합니다.
+동작 방식을 알아보기 전에  ``AbstractStringBuilder``이 가지고 있는 맴버 변수로 3가지를 살펴봐야 합니다.
 
-## StringBuilder 
+- byte[] value: 문자열을 저장하기 위한 바이트 배열
+- int count: 사용된 문자의 갯수
+- byte coder: 값(value)의 인코딩 식별자
+
+``value``는 바이트 배열로 객체 내부에서 버퍼(buffer)로 사용되는 문자열 데이터를 관리하고 조작하는데 사용됩니다.  
+``count``는 문자열의 용량(capacity)을 관리하기 위한 문자열 데이터의 길이로 내부 버퍼의 크기를 나타내며, 현재 관리 중인 문자열 데이터의 길이만큼 늘어납니다.   
+``coder``는 Java 11부터 추가된 맴버 변수로 이는 인코딩 값에 따라 단일 바이트 또는 2 바이트로 처리하기 위한 문자열 데이터의 인코딩 식별자를 나타내기 위한 변수입니다.
+
+위와 같이 3개의 맴버 변수를 가지고 있으며 ``AbstractStringBuilder``가 해당 변수를 어떤 식으로 관리하고 활용하는지 생성 시점부터 문자열 데이터를 조작하는 주요 메소드를 통해 살펴 보겠습니다.
+
+```java
+ private static final byte[] EMPTYVALUE = new byte[0];
+
+ AbstractStringBuilder() {
+        value = EMPTYVALUE;
+    }
+
+ AbstractStringBuilder(int capacity) {
+     if (COMPACT_STRINGS) {
+         value = new byte[capacity];
+         coder = LATIN1;
+     } else {
+         value = StringUTF16.newBytesFor(capacity);
+         coder = UTF16;
+     }
+ }
+```
+
+``AbstractStringBuilder``는 기본 생성자와 int를 매개 변수로 가지는 2가지의 생성자를 제공합니다.
+먼저 기본 생성자 같은 경우는 관리할 문자열 데이터를 가지고 있지 않기 때문에 빈 바이트 배열을 버퍼에 할당하게 됩니다.  
+추가로 매개 변수로 용량(capacity)을 받는 생성자 같은 경우는 ``COMPACT_STRINGS``의 활성화 여부에 따라 문자열 데이터에 사용할 인코딩을 설정합니다.
+
+> 기본적으로 ``COMPACT_STRINGS``는 비활성화 되어 있지만 JVM 플래그를 통해 활성화 할 수 있습니다.
+
+``COMPACT_STRINGS``가 활성화 되어 있다면 문자열 데이터를 단일 바이트로 처리하기 위한 인코딩으로 ``LATIN1``이 설정됩니다.
+비활성화 상태라면 ``UTF-16`` 문자열 데이터를 2 바이트 처리하는 인코딩으로 설정됩니다.
+
+```java
+  public static byte[] newBytesFor(int len) {
+      if (len < 0) {
+          throw new NegativeArraySizeException();
+      }
+      if (len > MAX_LENGTH) {
+          throw new OutOfMemoryError("UTF16 String size is " + len +
+                                     ", should be less than " + MAX_LENGTH);
+      }
+      return new byte[len << 1];
+  }
+```
+
+2 바이트로 데이터를 처리하기 위해 ``newBytesFor()`` 메소드는 전달받은 용량을 $$2^1$$ 만큼 **Left Shift**시킵니다.
+
+```java
+  public AbstractStringBuilder append(String str) {
+      if (str == null) {
+          return appendNull();
+      }
+      int len = str.length();
+      ensureCapacityInternal(count + len);
+      putStringAt(count, str);
+      count += len;
+      return this;
+  }
+```
+
+## StringBuilder
 
 ## StringBuffer
 
