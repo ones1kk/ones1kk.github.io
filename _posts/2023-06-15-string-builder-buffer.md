@@ -108,7 +108,7 @@ public final class String
     }
 ```
 
-추가로 덧셈(+) 연산자를 통해 문자열을 결합한다는 것 또한 새로운 ``String`` 객체를 생성하게 되어 많은 자원 사용때문에 속도가 느려진다는 단점이 있습니다.
+추가로 덧셈(+) 연산자를 통해 문자열을 결합한다는 것 또한 새로운 ``String`` 객체를 생성하게 되어 많은 자원을 사용하기 때문에 속도가 느려지는 단점이 있습니다.
 
 ```java
     public static void main(String[] args) {
@@ -136,6 +136,8 @@ public final class String
 
 위와 같이 3개의 맴버 변수를 가지고 있으며 ``AbstractStringBuilder``가 해당 변수를 어떤 식으로 관리하고 활용하는지 생성 시점부터 문자열 데이터를 조작하는 주요 메소드를 통해 살펴 보겠습니다.
 
+### Constructor
+
 ```java
  private static final byte[] EMPTYVALUE = new byte[0];
 
@@ -155,8 +157,8 @@ public final class String
 ```
 
 ``AbstractStringBuilder``는 기본 생성자와 int를 매개 변수로 가지는 2가지의 생성자를 제공합니다.
-먼저 기본 생성자 같은 경우는 관리할 문자열 데이터를 가지고 있지 않기 때문에 빈 바이트 배열을 버퍼에 할당하게 됩니다.  
-추가로 매개 변수로 용량(capacity)을 받는 생성자 같은 경우는 ``COMPACT_STRINGS``의 활성화 여부에 따라 문자열 데이터에 사용할 인코딩을 설정합니다.
+기본 생성자는 관리할 문자열 데이터를 가지고 있지 않기 때문에 빈 바이트 배열을 버퍼에 할당하게 됩니다.  
+매개 변수로 용량(capacity)을 받는 생성자는 ``COMPACT_STRINGS``의 활성화 여부에 따라 문자열 데이터에 사용할 인코딩을 설정합니다.
 
 > 기본적으로 ``COMPACT_STRINGS``는 비활성화 되어 있지만 JVM 플래그를 통해 활성화 할 수 있습니다.
 > ``java -XX:+CompactStrings ${APP_NAME}``
@@ -165,6 +167,7 @@ public final class String
 비활성화 상태라면 ``UTF-16`` 문자열 데이터를 2 바이트 처리하는 인코딩으로 설정됩니다.
 
 ```java
+final class StringUTF16 {
   public static byte[] newBytesFor(int len) {
       if (len < 0) {
           throw new NegativeArraySizeException();
@@ -175,9 +178,14 @@ public final class String
       }
       return new byte[len << 1];
   }
+  ...
+}
 ```
 
-2 바이트로 데이터를 처리하기 위해 ``newBytesFor()`` 메소드는 전달받은 용량을 $$2^1$$ 만큼 **Left Shift**시킵니다.
+2 바이트로 데이터를 처리하기 위해서는 관리하는 버퍼의 용량을 늘려야하기 때문에  ``StringUTF16.newBytesFor()`` 메소드를 호출하여 전달받은 용량을 $$2^1$$ 만큼 **Left Shift**
+시킵니다.
+
+### Method
 
 ```java
   public AbstractStringBuilder append(String str) {
@@ -191,6 +199,36 @@ public final class String
       return this;
   }
 ```
+
+인자로 넘어온 값이 ``null``일 경우 ``appendNull()`` 메소드 실행 후 종료합니다.
+
+```java
+  private AbstractStringBuilder appendNull() {
+      ensureCapacityInternal(count + 4);
+      int count = this.count;
+      byte[] val = this.value;
+      if (isLatin1()) {
+          val[count++] = 'n';
+          val[count++] = 'u';
+          val[count++] = 'l';
+          val[count++] = 'l';
+      } else {
+          count = StringUTF16.putCharsAt(val, count, 'n', 'u', 'l', 'l');
+      }
+      this.count = count;
+      return this;
+  }
+```  
+
+``null`` 값이면 현재 문자열 데이터의 인코딩에 맞는 용량만큼 증가시키고 문자열 "null"을 현재 문자열 데이터 끝 부분에 추가합니다. 
+
+
+
+마지막으로 ``append()`` 메소드를 정리하자면 아래와 같습니다.
+
+- 현재 버퍼에 존재하는 문자열 데이터에 지정된 문자열을 추가합니다.
+- 문자열 인자의 문자들이 순서대로 추가되며, 인자의 길이만큼 이 시퀀스의 길이가 증가합니다.
+- 인자가 ``null``인 경우, "null"이라는 4개의 문자가 추가됩니다.
 
 ## StringBuilder
 
