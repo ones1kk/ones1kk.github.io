@@ -119,11 +119,11 @@ public final class String
 ```
 
 이런 문제점들을 해결하기 위해 문자열 연산에 특화된 기능을 제공하는 ``StringBuilder`` 와 ``StringBuffer``가 등장하게 되었습니다.
-이 둘은 가변(mutable)하는 문자열을 처리하기 위한 클래스로 불변 객체인 ``String``을 문자열 추가, 수정, 삭제 등 동적으로 조작할 수 있는 메소드를 제공합니다.
+이 둘은 가변(mutable)하는 문자열을 처리하기 위한 클래스로 불변 객체인 ``String``을 문자열 추가, 수정, 삭제 등 동적으로 조작할 수 있는 메소드드를 제공합니다.
 
 ## AbstractStringBuilder
 
-``AbstractStringBuilder``는 ``StringBuilder`` 와 ``StringBuffer``의 핵심 기능을 추상화한 클래스로, 문자열 조작에 필요한 기본적인 동작과 메서드를 제공합니다.
+``AbstractStringBuilder``는 ``StringBuilder`` 와 ``StringBuffer``의 핵심 기능을 추상화한 클래스로, 문자열 조작에 필요한 기본적인 동작과 메소드를 제공합니다.
 동작 방식을 알아보기 전에  ``AbstractStringBuilder``이 가지고 있는 맴버 변수로 3가지를 살펴봐야 합니다.
 
 - byte[] value: 문자열을 저장하기 위한 바이트 배열
@@ -185,7 +185,7 @@ final class StringUTF16 {
 2 바이트로 데이터를 처리하기 위해서는 관리하는 버퍼의 용량을 늘려야하기 때문에  ``StringUTF16.newBytesFor()`` 메소드를 호출하여 전달받은 용량을 $$2^1$$ 만큼 **Left Shift**
 시킵니다.
 
-### Method
+### append
 
 ```java
   public AbstractStringBuilder append(String str) {
@@ -220,9 +220,38 @@ final class StringUTF16 {
   }
 ```  
 
-``null`` 값이면 현재 문자열 데이터의 인코딩에 맞는 용량만큼 증가시키고 문자열 "null"을 현재 문자열 데이터 끝 부분에 추가합니다. 
+``null`` 값이면 현재 문자열 데이터의 인코딩에 맞는 용량만큼 증가시키고 문자열 "null"을 현재 문자열 데이터 끝 부분에 추가합니다.
+또한 문자열 데이터에 값이 추가됨에 따라 내부 버퍼의 용량을 확보하기 위해 파라미터의 길이만큼 필요한 용량을 증가 시키기 위해 ``ensureCapacityInternal()`` 메소드를 호출합니다.
 
+```java
+  private void ensureCapacityInternal(int minimumCapacity) {
+      // overflow-conscious code
+      int oldCapacity = value.length >> coder;
+      if (minimumCapacity - oldCapacity > 0) {
+          value = Arrays.copyOf(value,
+                  newCapacity(minimumCapacity) << coder);
+      }
+  }
+```  
 
+먼저 현재 내부 버퍼의 용량인 ``oldCapacity``를 계산합니다.
+문자열 데이터의 인코딩을 나타내는 ``coder``는 단일 바이트 또는 2 바이트이며 현재 내부 버퍼의 길이에 **Right Shift**하게 됩니다.
+``minimumCapacity - oldCapacity``가 양수라면, 즉 내부 버퍼 용량을 확보해야한다면 현재 인코딩에 맞춰 새로운 용량으로 복사하여 재할당합니다.
+
+충분한 버퍼 용량이 확보됐다면 실제 버퍼에 추가된 문자열을 추가하는 ``putStringAt()``메소드를 호출합니다.
+
+```java
+  private final void putStringAt(int index, String str) {
+      if (getCoder() != str.coder()) {
+          inflate();
+      }
+      str.getBytes(value, index, coder);
+  }
+```  
+
+현재 내부 버퍼의 문자열 데이터와 인자로 넘어온 문자열의 인코딩이 각각 다른 경우 먼저 인코딩 방식을 조정하기 위해 내부 버퍼 용량을 확보하는 ``inflate()`` 메소드를 실행 시킵니다.
+내부 버퍼가 충분히 확보 되었다면 내부 버퍼에 지정된 인덱스, 즉 현재 문자열 데이터 끝 부분부터 인자로 넘어온 문자열을 삽입합니다.  
+그 후 버퍼 용량을 나타내는 맴버 변수 ``count``를 인자로 넘어온 문자열 길이를 더해줌으로써 메소드는 종료됩니다. 
 
 마지막으로 ``append()`` 메소드를 정리하자면 아래와 같습니다.
 
