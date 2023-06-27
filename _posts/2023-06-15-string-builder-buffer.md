@@ -251,7 +251,7 @@ final class StringUTF16 {
 
 현재 내부 버퍼의 문자열 데이터와 인자로 넘어온 문자열의 인코딩이 각각 다른 경우 먼저 인코딩 방식을 조정하기 위해 내부 버퍼 용량을 확보하는 ``inflate()`` 메소드를 실행 시킵니다.
 내부 버퍼가 충분히 확보 되었다면 내부 버퍼에 지정된 인덱스, 즉 현재 문자열 데이터 끝 부분부터 인자로 넘어온 문자열을 삽입합니다.  
-그 후 버퍼 용량을 나타내는 맴버 변수 ``count``를 인자로 넘어온 문자열 길이를 더해줌으로써 메소드는 종료됩니다. 
+그 후 버퍼 용량을 나타내는 맴버 변수 ``count``를 인자로 넘어온 문자열 길이를 더해줌으로써 메소드는 종료됩니다.
 
 마지막으로 ``append()`` 메소드를 정리하자면 아래와 같습니다.
 
@@ -259,8 +259,58 @@ final class StringUTF16 {
 - 문자열 인자의 문자들이 순서대로 추가되며, 인자의 길이만큼 이 시퀀스의 길이가 증가합니다.
 - 인자가 ``null``인 경우, "null"이라는 4개의 문자가 추가됩니다.
 
-## StringBuilder
+## ``StringBuilder`` 와 ``StringBuffer``의 차이점
 
-## StringBuffer
+``StringBuilder`` 와 ``StringBuffer`` 모두  ``AbstractStringBuilder``라는 추상 클래스를 상속 받아 이미 구현된 핵심 기능을 사용하고 있습니다.
+하지만 단 한가지 차이점이 존재한다면, **쓰레드 안전성**입니다.
+
+```java
+public final class StringBuilder
+    extends AbstractStringBuilder
+    implements java.io.Serializable, Comparable<StringBuilder>, CharSequence
+{
+  ...
+  @Override
+  @HotSpotIntrinsicCandidate
+  public StringBuilder append(String str) {
+      super.append(str);
+      return this;
+  }
+  ...
+}
+```
+
+```java
+public final class StringBuffer
+    extends AbstractStringBuilder
+    implements java.io.Serializable, Comparable<StringBuffer>, CharSequence
+{
+  ...
+  @Override
+  @HotSpotIntrinsicCandidate
+  public synchronized StringBuffer append(String str) {
+      toStringCache = null;
+      super.append(str);
+      return this;
+  }
+  ...
+}
+```  
+
+위 코드 블럭은 ``StringBuilder`` 와 ``StringBuffer``의 ``append()`` 메소드 부분만 가져온 부분입니다.
+두 클래스 모두 ``AbstractStringBuilder.append()``를 호출하지만  ``StringBuffer``는 **synchronized** 자바 예약어 명시를 통해 스레드간 동기화를 보장하는 것이
+차이입니다.
+``StringBuffer``는 멀티 스레드 환경에서 한 스레드가 해당 ``append()``를 수행하고 있다면, 수행 중인 스레드에 ``lock``을 걸어 스레드 안전성을 보장합니다.
+정리하자면 두 클래스는 문법이나 내부 구현도 모두 같지만, 동기화 지원 유무에서 차이가 있습니다.
+``StringBuilder``는 동기화를 지원하지 않는 반면 ``StringBuffer``를 지원하여 멀티 스레드 환경에서 안전하게 동작합니다.
+
+마지막으로 위에서 살펴본 세 클래스에 대한 특징을 표로 간단히 정리하자면 아래와 같은 특성을 가집니다.
+
+|      -       |        String        | StringBuffer | StringBuilder |
+|:------------:|:--------------------:|:------------:|:-------------:|
+| Storage Area | String Constant Pool |     Heap     |     Heap      |
+|  mutability  |      Immutable       |   Mutable    |    Mutable    |
+| Thread Safe  |          O           |      O       |       X       |
+| Performance  |         Fast         |  Very Slow   |     Fast      |    
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
