@@ -12,7 +12,7 @@ tags: [ GoF, Design-Pattern, Composite-Pattern ]
 컴포지트 패턴의 주요 아이디어는 **단일 객체와 복합 객체를 동일한 인터페이스로 다루기**입니다. 
 이를 통해 클라이언트는 개별 객체와 복합 객체를 구별하지 않고 일관된 방식으로 즉, 클라이언트는 개별 객체든 복합 객체든 동일한 방식으로 메소드를 호출하여 사용할 수 있습니다.
 
-# 구조
+# Structure
 
 ![composite-pattern](/assets/img/software-architecture/design-pattern/composite-pattern/composite-pattern.png)  
 > [출처](https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%8F%AC%EC%A7%80%ED%8A%B8_%ED%8C%A8%ED%84%B4)
