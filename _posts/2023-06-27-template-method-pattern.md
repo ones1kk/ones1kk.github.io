@@ -23,7 +23,6 @@ tags: [ GoF, Design-Pattern, Template-Method-Pattern ]
 - Abstract Class
   - 알고리즘의 구조를 정의하고 템플릿 메소드를 포함합니다.
   - 추상 메소드와 구체 메소드를 포함하며 구체 메소드들은 템플릿 메소드를 호출하여 알고리즘의 구조를 유지합니다.
-  - 순서 제어용으로 사용되는 메소드로 기본적인 내용만 구현하거나 비워놓는 메서드인 ``hook method``를 가집니다.
 - Concrete Class
   - 추상 클래스를 상속받아 템플릿 메소드를 구현하고, 필요한 구체 메소드들을 오버라이딩하여 알고리즘의 특정 단계를 구체화합니다.
 
@@ -147,7 +146,7 @@ protected final void processRequest(HttpServletRequest request, HttpServletRespo
 4. 웹 애플리케이션 컨텍스트 홀더를 재설정합니다.
 5. 웹 요청 처리 결과를 로그로 남깁니다.
 
-위와 같은 일련의 과정을 하나의 구조로 제공하며 실질적인 웹 요청 처리는 ``FrameworkServlet``를 상속 받는 하위 클래스에서 구현하게 됩니다.
+위와 같은 일련의 과정을 하나의 구조로 제공하며 실질적인 웹 요청 처리는 ``FrameworkServlet``를 상속 받는 ``DispatcherServlet``에서 구현하게 됩니다.
 ``DispatcherServlet``는 ``doService()`` 또 내부적으로 ``doDispatch()`` 메소드에게 웹 요청 처리를 위임하지만 결국 해당 메소드에서 아래와 같이 로직이 수행됩니다.
 
 ```java
@@ -211,6 +210,9 @@ protected void doService(HttpServletRequest request, HttpServletResponse respons
 2. 핸들러를 실행하기 위한 핸들러 어댑터를 가져옵니다.
 3. 핸들러를 실행하여 요청을 처리하고, 처리 결과를 반환합니다.
 4. 처리된 결과를 기반으로 응답을 생성하고 전송합니다.
+
+정리하자면 ``FrameworkServlet``은 웹 요청 처리를 위한 템플릿 메소드로 ``doService()``를 제공하며 하위 구현 클래스에서 해당 메소드를 구현하여 ``doGet(), doPost()``와 같은 구체 메소드에서 해당 메소드를 실행시킵니다. 
+또한 ``DispatcherServlet``은 ``doService()`` 메소드를 구현하며 핵심 웹 요청 처리 전 후처리만 외 핵심 로직은  ``doDispatch()`` 메소드에 위임하는 템플릿 메소드 패턴을 가집니다. 
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
 
