@@ -7,7 +7,7 @@ tags: [ GoF, Design-Pattern, Template-Method-Pattern ]
 
 # Template Method Pattern
 
-템플릿 메소드 패턴(Template Method Pattern)은 은 Gang of Four(GoF) 디자인 패턴 중
+템플릿 메소드 패턴(Template Method Pattern)은 Gang of Four(GoF) 디자인 패턴 중
 하나로 [Design Patterns: Elements of Reusable Object-Oriented Software](https://www.yes24.com/Product/Goods/17525598)라는 책에서
 소개 된 23가지 디자인 패턴 중 하나입니다.
 템플릿 메소드 패턴은 **행동 패턴**으로서 특정 알고리즘을 사용하는 유사한 클래스들의 알고리즘의 구조를 정의하고, 하위 클래스에서는 구조를 변경하지 않고 특정 단계 메소드들을 구체화하여 해당 구조를 표현하기 위해서
@@ -43,7 +43,8 @@ tags: [ GoF, Design-Pattern, Template-Method-Pattern ]
 데이터베이스 연결, 트랜잭션 관리, 예외 처리 등과 같은 공통된 동작을 처리하는 메소드들이 정의되어 있습니다.
 ``JdbcOperations``는 JDBC 작업을 지정하는 인터페이스로 SQL 쿼리 실행, 업데이트, 프로시저 호출 등이 콜백 패턴으로 ``JdbcTemplate``에 구현되어 있습니다.
 
-``JdbcTemplate``의 경우 ``excute()`` 메소드를 통해 템플릿 메소드를 제공합니다.
+``JdbcTemplate``의 경우는 템플릿 메소드 패턴에 정의되는 클래스 구조를 가지고 있지는 않지만 해당 구조를 가지는 메소드를 가지고 제한하는 점에 있어 그 기준이 부합합니다. 
+즉 ``JdbcTemplate``는 구조적으로는 템플릿 메소드 패턴에 부합하진 않지만 ``excute()`` 메소드를 통해 정의한 알고리즘 구조의 변경없이 특정 알고리즘을 재정의해 사용하는 목적에 있어 템플릿 메소드 패턴을 적용한 클래스로 볼 수 있습니다. 
 
 ```java 
 @Override
