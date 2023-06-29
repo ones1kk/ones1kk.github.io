@@ -129,7 +129,7 @@ Java 설정 파일, XML 파일, 프로퍼티 파일, 관계형 DB 설정을 불�
 
 - ``beanClassName``: 생성할 빈 클래스 이름
 - ``factoryBeanName``: 팩토리 빈 클래스 이름
-- ``factoryMethodName``: 팩토리 메서드 이름
+- ``factoryMethodName``: 팩토리 메소드 이름
 - ``scope``: 싱글톤(기본값)
 - ``lazylnit``: 실제 빈을 사용할 때 생성 여부
 - ``lnitMethodName``: 호출되는 초기화 메소드 이름

@@ -27,7 +27,7 @@ tags: [ GoF, Design-Pattern, Composite-Pattern ]
 - Composite
   - 복합 객체를 나타내는 역할입니다.
   - Component 인터페이스를 구현하며, 자식 요소를 가질 수 있습니다.
-  - 자식 요소를 관리하고, 자식 요소에 대한 작업을 위한 메서드를 구현합니다.
+  - 자식 요소를 관리하고, 자식 요소에 대한 작업을 위한 메소드를 구현합니다.
   - 복합 객체의 구조를 재귀적으로 표현할 수 있습니다.
 
 # Composite Pattern of Spring Framework
