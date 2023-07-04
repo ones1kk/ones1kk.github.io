@@ -309,7 +309,7 @@ public final class StringBuffer
 |      -       |        String        | StringBuffer | StringBuilder |
 |:------------:|:--------------------:|:------------:|:-------------:|
 | Storage Area | String Constant Pool |     Heap     |     Heap      |
-|  mutability  |      Immutable       |   Mutable    |    Mutable    |
+|  Mutability  |      Immutable       |   Mutable    |    Mutable    |
 | Thread Safe  |          O           |      O       |       X       |
 | Performance  |         Fast         |  Very Slow   |     Fast      |    
 
