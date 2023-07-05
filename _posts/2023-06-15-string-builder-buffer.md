@@ -32,10 +32,10 @@ String Constant Pool은 자바의 문자열 상수를 관리하기 위해 사용
 과거 버전 Java의 String Constant Pool은 Permenent Generation에 있어 고정된 크기의 저장 공간이였기 때문에 OOM(OutOfMemory) 제약이 있었지만,
 버전이 업그레이드 되면서 위치가 Heap 영역에서 Metaspace 영역으로 이동됐습니다.
 
-> Metaspace 영역은 JVM의 Native Memory를 사용하며 JVM이 관리합니다. Perm영역과의 결정적인 차이는 메모리가 동적으로 관리되며 필요할 경우 OS에게 요청하여 메모리를 추가 할당할 수
+> Metaspace 영역은 JVM의 Native Memory를 사용하며 JVM이 관리합니다. Permenent Generation 영역과의 결정적인 차이는 메모리가 동적으로 관리되며 필요할 경우 OS에게 요청하여 메모리를 추가 할당할 수
 > 있습니다.
 
-1. Java 6 이전: String Constant Pool은 클래스와 관련된 메타 데이터를 저장하는 JVM의 메모리 영역의 Permanent Generation 저장되었습니다.
+1. Java 6 이전: String Constant Pool은 클래스후와 관련된 메타 데이터를 저장하는 JVM의 메모리 영역의 Permanent Generation 저장되었습니다.
 2. Java 7: Permanent Generation이 아닌 Heap 영역에 저장하면서 메모리 관리 측면에서 유연성을 높혔습니다.
 3. Java 8: Permanent Generation가 완전히 제거되었고, 네이티브 메모리 영역인 Metaspace라는 새로운 메모리 영역이 도입되면서 String Constant Pool은 Metaspace에
    저장됩니다. 또한 8버전을 기점으로 내부 구현도 HashTable에서 HashMap으로 변경됐습니다.

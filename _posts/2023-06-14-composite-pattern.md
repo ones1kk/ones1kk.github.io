@@ -81,4 +81,4 @@ public void configureViewResolvers(ViewResolverRegistry registry) {
 
 ``WebMvcConfigurer``를 상속 받아 구현한 설정 파일을 통해 등록한 ``viewResolver``들을 ``ViewResolverComposite``가 관리하며 실행시키게 됩니다.
 
-로
+오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
