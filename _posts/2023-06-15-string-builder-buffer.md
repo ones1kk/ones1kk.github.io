@@ -22,7 +22,7 @@ public static void main(String[] args) {
 ``String``은 위와 같이 두가지 방법으로 객체를 생성할 수 있습니다.
 첫번째 방법은 일반적으로 객체를 생성하는 방법인 생성자를 사용하는 방법이며 두번째 방법이 문자열 리터럴을 사용해 객체를 생성하는 방법입니다.
 두 변수에는 동일안 ``'a'``라는 값을 가지고 있는 객체이지만, 객체가 할당되는 메모리 영역에는 차이가 있습니다.
-Java에서 동적으로 객체를 생성하게 되면 객체(참조값)를 메모리에 저장하게 되는데 자바의 메모리는 이를 모든 쓰레드에서 접근 가능한 ``Heap`` 영역에 할당하게 됩니다.
+Java에서 동적으로 객체를 생성하게 되면 객체(참조값)를 메모리에 저장하게 되는데 자바의 메모리는 이를 모든 스레드에서 접근 가능한 ``Heap`` 영역에 할당하게 됩니다.
 하지만 문자열 리터럴로 생성한 객체는 **String Constant Pool** 라는 특별한 영역에 할당하여 관리하게 됩니다.
 
 ## String Constant Pool
@@ -35,7 +35,7 @@ String Constant Pool은 자바의 문자열 상수를 관리하기 위해 사용
 > Metaspace 영역은 JVM의 Native Memory를 사용하며 JVM이 관리합니다. Permenent Generation 영역과의 결정적인 차이는 메모리가 동적으로 관리되며 필요할 경우 OS에게 요청하여 메모리를 추가 할당할 수
 > 있습니다.
 
-1. Java 6 이전: String Constant Pool은 클래스후와 관련된 메타 데이터를 저장하는 JVM의 메모리 영역의 Permanent Generation 저장되었습니다.
+1. Java 6 이전: String Constant Pool은 클래스와 관련된 메타 데이터를 저장하는 JVM의 메모리 영역의 Permanent Generation 저장되었습니다.
 2. Java 7: Permanent Generation이 아닌 Heap 영역에 저장하면서 메모리 관리 측면에서 유연성을 높혔습니다.
 3. Java 8: Permanent Generation가 완전히 제거되었고, 네이티브 메모리 영역인 Metaspace라는 새로운 메모리 영역이 도입되면서 String Constant Pool은 Metaspace에
    저장됩니다. 또한 8버전을 기점으로 내부 구현도 HashTable에서 HashMap으로 변경됐습니다.
@@ -262,7 +262,7 @@ final class StringUTF16 {
 ## ``StringBuilder`` 와 ``StringBuffer``의 차이점
 
 ``StringBuilder`` 와 ``StringBuffer`` 모두  ``AbstractStringBuilder``라는 추상 클래스를 상속 받아 이미 구현된 핵심 기능을 사용하고 있습니다.
-하지만 단 한가지 차이점이 존재한다면, **쓰레드 안전성**입니다.
+하지만 단 한가지 차이점이 존재한다면, **스레드 안전성**입니다.
 
 ```java
 public final class StringBuilder
