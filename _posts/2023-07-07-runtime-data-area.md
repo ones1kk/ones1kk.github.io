@@ -63,8 +63,8 @@ Eden 영역의 메모리는 회수됩니다.
 
 Old Generation은 Young Generation에서 살아남아 오랜 시간 동안 참조되는 객체들이 할당되는 영역입니다.
 Old Generation은 Young Generation보다 크고, 오랜 시간 동안 살아남은 객체들이 저장되는 곳입니다.
-Old Generation에서 GC가 발생하는 빈도는 상대적으로 적으며 Old Generation에서의 GC를 Full GC라고 합니다.
-Full GC는 일반적으로 Young Generation에 비해 더 시간이 오래 걸리지만 참조되는 객체들이 적기 때문에 Minor GC보다 덜 빈번하게 발생합니다.
+Old Generation에서 GC가 발생하는 빈도는 상대적으로 적으며 Old Generation에서의 GC를 Major GC라고 합니다.
+Major GC는 일반적으로 Young Generation에 비해 더 시간이 오래 걸리지만 참조되는 객체들이 적기 때문에 Minor GC보다 덜 빈번하게 발생합니다.
 
 ## JVM Stack
 
