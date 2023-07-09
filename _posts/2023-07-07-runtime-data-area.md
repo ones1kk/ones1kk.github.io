@@ -68,14 +68,37 @@ Major GC는 일반적으로 Young Generation에 비해 더 시간이 오래 걸�
 
 ## JVM Stack
 
-스레드 별로 생성되며 메소드 실행 관련 정보를 저장하는 영역(프레임 저장)
+Stack 영역은 스레드 별로 생성되며 메소드 스코프에 할당된 로컬 변수 및 기본형 타입 변수, 객체에 대한 참조값을 저장하는 영역입니다.
 
-## PC Register
+> 각 JVM 스레드에는 스레드와 동시에 생성된 전용 Java 가상 머신 스택이 있습니다. JVM 스택은 "스택 프레임"이라고도 하는 프레임을 저장합니다. JVM 스택은 C와 같은 기존 언어의 스택과 유사합니다.
+> 로컬 변수와 부분 결과를 보유하고 메서드 호출 및 반환에 참여합니다.  
+> [출처](https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-2.html)
 
-스레드 별로 생성되며 실행 중인 명령(오프셋)을 저장하는 영역
+![2-stacks-frames-separate-threads](/assets/img/language/java/jvm/2-stacks-frames-separate-threads.png)
+
+> [출처](https://alvinalexander.com/scala/fp-book/recursion-jvm-stacks-stack-frames/)
+
+자료구조 Stack은 마지막에 들어온 값이 먼저 나가는 후입선출(LIFO: Last-In First-Out) 구조로 구성되어 있습니다.
+이와 동일하게 메소드 호출 시 각각의 스택 프레임(Stack Frame)이 생성되고 새로운 메소드가 호출되면 이전에 존재하던 스택 프레임 위에 새로운 스택 프레임이 쌓이며 메소드가 종료될 때 스택에서 제거됩니다.
+스택 프레임은 각 스레드가 자체 스택에서 작동하기 때문에 ThreadSafe한 것이 특징이며 일반적으로 OS에 의해 Heap 영역보다 작은 사이즈가 할당되고 속도도 상대적으로 빠른 것이
+특징입니다.
+만약 Stack 영역이 가득 차게 된다며 자바는 그 유명한 ``java.lang.StackOverFlowError`` 에러를 내보내게 됩니다.
+
+![stack-memory](/assets/img/language/java/jvm/stack-memory.png)
+
+> [출처](https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973)
+
+위의 사진과 같이 Heap 영역에는 ``Person`` 객체가 할당되어 있고 Stack에서는 참조값 23을 가지는  ``p`` 변수가 저장되어 있습니다.
+
+## Program Counter Register
+
+PC Register는 스레드 별로 생성되며 현재 실행 중인 JVM 명령(오프셋)을 저장하는 영역입니다.
+자바는 하나의 프로세스이기 때문에 CPU에게 직접 연산을 수행하도록 하는 것이 아닌, JVM 리소스를 이용하여 현재 작업하는 내용을 CPU에게 연산으로 제공해야하며 이를 위한 버퍼 공간으로 PC Register를 활용합니다. 
 
 ## Native Method Stack
 
-스레드 별로 생성되며 네이티브 코드 실행에 관련 정보를 저장하는 영역
+Native Method Stack는 스레드 별로 생성되며 실제 실행할 수 있는 기계어로 작성된 프로그램을 실행시키는 영역입니니다.
+Native Method는 특정 플랫폼 또는 특정 하드웨어에 종속된 기능을 사용하기 위해 자바 이외의 언어(C 계열, 어셈블리 등)로 작성된 네이티브 코드입니다.
+Java Native Interface(JNI)에서 Native Method를 호출 시 JVM을 벗어나 네이티브 코드로 진입하게 되는데 이 때 스택 프레임)이 Native Method Stack에 추가됩니다. 
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
