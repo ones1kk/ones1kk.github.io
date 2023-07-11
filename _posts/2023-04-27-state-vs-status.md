@@ -1,8 +1,8 @@
 ---
 title: State vs Status
 date: 2023-04-27 22:25:00 +09:00
-categories: [Software Architecture]
-tags: [Status, State]
+categories: [ Software Architecture ]
+tags: [ Status, State ]
 ---
 
 # 들어가기에 앞서
