@@ -1,7 +1,7 @@
 ---
 title: 컴퓨터 시스템(Computer System)
 date: 2023-05-01 02:35:00 +09:00
-categories: [Computer Science, Computer Structure]
+categories: [Computer Science, Computer Architecture]
 tags: [CS, Computer-System]
 ---
 
