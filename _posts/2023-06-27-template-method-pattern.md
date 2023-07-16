@@ -8,9 +8,8 @@ tags: [ GoF, Design-Pattern, Template-Method-Pattern ]
 # Template Method Pattern
 
 템플릿 메소드 패턴(Template Method Pattern)은 Gang of Four(GoF) 디자인 패턴 중
-하나로 [Design Patterns: Elements of Reusable Object-Oriented Software](https://www.yes24.com/Product/Goods/17525598)라는 책에서
-소개 된 23가지 디자인 패턴 중 하나입니다.
-템플릿 메소드 패턴은 **행동 패턴**으로서 특정 알고리즘을 사용하는 유사한 클래스들의 알고리즘의 구조를 정의하고, 하위 클래스에서는 구조를 변경하지 않고 특정 단계 메소드들을 구체화하여 해당 구조를 표현하기 위해서
+하나로 [Design Patterns: Elements of Reusable Object-Oriented Software](https://www.yes24.com/Product/Goods/17525598) 책에서 소개 된 23가지 디자인 패턴 중 하나입니다.
+템플릿 메소드 패턴은 **행동 패턴**으로써 특정 알고리즘을 사용하는 유사한 클래스들의 알고리즘의 구조를 정의하고, 하위 클래스에서는 구조를 변경하지 않고 특정 단계 메소드들을 구체화하여 해당 구조를 표현하기 위해서
 사용됩니다.
 이를 통해 클라이언트는 특정 알고리즘 구조(템플릿)를 변경하지 않고 구체 메소드를 확장하거나 재정의할 수 있는 유연성을 제공합니다. 또한 정의된 구조를 제외하고 하위의 세부 실행 내용을 다양하게 구현하여 사용할 수
 있습니다.
@@ -26,7 +25,7 @@ tags: [ GoF, Design-Pattern, Template-Method-Pattern ]
 - Concrete Class
   - 추상 클래스를 상속받아 템플릿 메소드를 구현하고, 필요한 구체 메소드들을 오버라이딩하여 알고리즘의 특정 단계를 구체화합니다.
 
-# Template Method Pattern of Spring Framework
+# Example of Template Method Pattern
 
 ## JdbcTemplate
 

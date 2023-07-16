@@ -51,7 +51,7 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 > - aud: 클라이언트(audience)
 
 ![jwt-anatomy](/assets/img/web/auth/jwt-anatomy.png)
-> [출처](https://www.ibm.com/docs/en/cics-ts/6.1?topic=cics-json-web-token-jwt)
+[출처](https://www.ibm.com/docs/en/cics-ts/6.1?topic=cics-json-web-token-jwt)
 
 > 실제 데이터들은 claim(메세지)이라고 불리며, JWT는 JSON을 이용해서 claim을 정의합니다.   
 > JWT는 위 사진 우측의 Header, Payload, Signature 3개의 부분과 같이 JSON 형태로 표현한 것인데, JSON은 개행 문자가 있기 때문에, REST API 호출 시 HTTP Header에
@@ -61,7 +61,7 @@ Signature는 서버에 저장한 키를 사용하여 생성합니다.
 아래는 JWT가 Authentication을 처리하는 흐름입니다.
 
 ![token-based-authentication](/assets/img/web/auth/token-based-authentication.jpg)
-> [출처](https://www.freecodecamp.org/news/how-to-sign-and-validate-json-web-tokens/)
+[출처](https://www.freecodecamp.org/news/how-to-sign-and-validate-json-web-tokens/)
 
 위 그림에서 눈 여겨 볼 점은 OAuth와 같은 단순 암호화된 문자열을 들고 있는 방식과 달리, 클라이언트에게 전달 받은 토큰의 내용을 서버 사이드에서 저장 & 관리할 필요 없이 Self-contained한 내용(
 아이디, 인가 정보 등)을 확인하고 이에 따라 응답만하게 됩니다.
