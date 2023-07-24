@@ -2,7 +2,7 @@
 title: 트랜스포트 계층(Transport Layer)(3)
 date: 2023-07-19 00:00:00 +09:00
 categories: [ Computer Science, Network ]
-tags: [ Transport, TCP, UDP ]
+tags: [ Transport, TCP ]
 math: true
 ---
 
