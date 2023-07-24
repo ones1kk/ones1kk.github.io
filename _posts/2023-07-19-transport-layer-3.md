@@ -6,7 +6,7 @@ tags: [ Transport, TCP, UDP ]
 math: true
 ---
 
-# 연결지향형 트랜스포트 : TCP
+# 연결지향형 트랜스포트: TCP
 
 ## 흐름 제어
 
