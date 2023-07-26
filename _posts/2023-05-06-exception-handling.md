@@ -385,8 +385,6 @@ static class ErrorResult {
 
 ![invoke-and-handle](/assets/img/spring/mvc/exception-handling/invoke-and-handle.png)
 
-![do-resolve-handler-method-exception](/assets/img/spring/mvc/exception-handling/do-resolve-handler-method-exception.png)
-
 리스폰즈 설정까지 마친 후 최종으로 설정된 ``ModelAndView`` 값에 따라 후속 조치를 한 후 클라이언트의 요청을 종료하고 예외를 반환하게 됩니다.
 
 마지막으로 ``ControllerAdivce``를 사용하는데 있어 주의할 점으로는 아래와 같습니다.
