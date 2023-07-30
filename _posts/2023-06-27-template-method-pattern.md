@@ -214,5 +214,4 @@ protected void doService(HttpServletRequest request, HttpServletResponse respons
 정리하자면 ``FrameworkServlet``은 웹 요청 처리를 위한 템플릿 메소드로 ``doService()``를 제공하며 하위 구현 클래스에서 해당 메소드를 구현하여 ``doGet(), doPost()``와 같은 구체 메소드에서 해당 메소드를 실행시킵니다. 
 또한 ``DispatcherServlet``은 ``doService()`` 메소드를 구현하며 핵심 웹 요청 처리 전 후처리만 외 핵심 로직은  ``doDispatch()`` 메소드에 위임하는 템플릿 메소드 패턴을 가집니다. 
 
-오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다. 
-
+오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
