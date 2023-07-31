@@ -1,5 +1,5 @@
 ---
-title: Observer 패턴(Observer Pattern)
+title: 옵저버 패턴(Observer Pattern)
 date: 2023-08-01 00:00:00 +09:00
 categories: [ Software Architecture, Design Pattern ]
 tags: [ GoF, Design-Pattern, Observer-Pattern ]
