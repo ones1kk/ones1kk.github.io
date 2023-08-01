@@ -133,16 +133,34 @@ Subject의 변경된 상태는 일괄적으로 여러 관찰자들에게 메시�
         mathTeacher.unsubscribe(studentB);
         
         mathTeacher.notifySubscribers();
+    }
 ```
 
 ![console-result](/assets/img/software-architecture/design-pattern/observer-pattern/console-result.png)
 
-위와 같이 옵저버 패턴을 적용해 코드를 작성하면 Subject와 Observer들은 강하게 결합되지는 않으며 상호 의존성이 낮은 Loose Coupling 상태를 유지하게 됩니다.
+위와 같이 옵저버 패턴을 적용해 코드를 작성하면 Subject와 Observer들은 강하게 결합되지는 않으며 상호 의존성이 낮은 [Loose Coupling 상태](https://ones1kk.github.io/posts/coupling/)를 유지하게 됩니다.
 
-## java.util.Observer
+## HttpSessionAttributeListener
 
-Java9 부터 Deprecated됐지만 Java에서 제공하는 옵저버 패턴 구현을 위한 클래스입니다.
-옵저버 패턴에서 옵저버 객체가 구현해야 하는 인터페이스입니다.
+```java
+public interface HttpSessionAttributeListener extends EventListener {
+
+
+    default void attributeAdded(HttpSessionBindingEvent se) {
+    }
+
+    default void attributeRemoved(HttpSessionBindingEvent se) {
+    }
+    
+    default void attributeReplaced(HttpSessionBindingEvent se) {
+    }
+}
+
+```
+
+``javax.servlet.http.HttpSessionAttributeListener``는 ``HttpSession`` 객체의 속성(attribute)이 변경되는 이벤트를 처리하기 위한 Subject 클래스입니다.
+``HttpSessionAttributeListener``를 구현하면 세션의 속성이 추가되거나 제거되는 등의 상태 변화를 감지하고 원하는 동작을 수행할 수 있습니다.
+
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
   
