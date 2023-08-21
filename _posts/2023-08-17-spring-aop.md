@@ -92,8 +92,34 @@ CGLIB는 내부적으로 다음과 같은 문제점이 있었습니다.
 
 ## 동작 방식
 
-### Proxy Factory
+### ProxyFactory
 
-### BeanPostProcessor
+![cglib-aop-proxy](/assets/img/spring/core/aop/cglib-aop-proxy.png)  
+
+![jdk-dynamic-aop-proxy](/assets/img/spring/core/aop/jdk-dynamic-aop-proxy.png)
+
+스프링은 인터페이스 기반의 JDK Dynamic Proxy와 클래스 & 인터페이스 기반의 CGLIB 프록시를 제공합니다. 
+
+``CglibAopProxy``, ``JdkDynamicAopProxy``는 ``org.springframework.aop.framework.AopProxy`` 상속 받아 구현했습니다. 
+``AopProxy``는 실제 프록시 객체를 생성하는 인터페이스로 ``DefaultAopProxyFactory``를 기본 구현체로 가지고 있습니다. 
+
+```java
+public interface AopProxy {
+
+	Object getProxy();
+
+	Object getProxy(@Nullable ClassLoader classLoader);
+
+	Class<?> getProxyClass(@Nullable ClassLoader classLoader);
+
+}
+```
+
+``AopProxy``는 ``getProxy()`` 메소드를 통해 각 구현체의 전략에 따라 프록시 객체를 생성한 후 반환합니다.  
+
+![proxy-factory](/assets/img/spring/core/aop/proxy-factory.png)  
+
+
+
 
 오탈자 및 오류 내용을 댓글 또는 메일로 알려주시면, 검토 후 조치하겠습니다.
