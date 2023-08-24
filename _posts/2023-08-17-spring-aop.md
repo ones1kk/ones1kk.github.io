@@ -94,15 +94,6 @@ CGLIB는 내부적으로 다음과 같은 문제점이 있었습니다.
 
 ### ProxyFactory
 
-![cglib-aop-proxy](/assets/img/spring/core/aop/cglib-aop-proxy.png)  
-
-![jdk-dynamic-aop-proxy](/assets/img/spring/core/aop/jdk-dynamic-aop-proxy.png)
-
-스프링은 인터페이스 기반의 JDK Dynamic Proxy와 클래스 & 인터페이스 기반의 CGLIB 프록시를 제공합니다. 
-
-``CglibAopProxy``, ``JdkDynamicAopProxy``는 ``org.springframework.aop.framework.AopProxy`` 상속 받아 구현했습니다. 
-``AopProxy``는 실제 프록시 객체를 생성하는 인터페이스로 ``DefaultAopProxyFactory``를 기본 구현체로 가지고 있습니다. 
-
 ```java
 public interface AopProxy {
 
@@ -115,9 +106,66 @@ public interface AopProxy {
 }
 ```
 
-``AopProxy``는 ``getProxy()`` 메소드를 통해 각 구현체의 전략에 따라 프록시 객체를 생성한 후 반환합니다.  
+스프링은 ``org.springframework.aop.framework.AopProxy``를 통해 AOP Proxy를 추상화했습니다.  
+그 중 제공하는 구현체로는 인터페이스 기반의 JDK Dynamic Proxy와 클래스 & 인터페이스 기반의 CGLIB 프록시가 있습니다.  
 
-![proxy-factory](/assets/img/spring/core/aop/proxy-factory.png)  
+![cglib-aop-proxy](/assets/img/spring/core/aop/cglib-aop-proxy.png)  
+
+![jdk-dynamic-aop-proxy](/assets/img/spring/core/aop/jdk-dynamic-aop-proxy.png)
+
+``AopProxy``는 ``getProxy()`` 메소드를 통해 각 구현체의 전략에 따라 프록시 객체에 접근할 수 있습니다. 
+
+또한 ``org.springframework.aop.framework.AopProxyFactory``는 위와 같은 ``AopProxy``를 생성하는 인터페이스로 ``DefaultAopProxyFactory``를 기본 구현체로 가지고 있습니다. 
+
+```java
+public interface AopProxyFactory {
+
+	AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException;
+}
+```
+
+기본 구현체인 ``DeafultAopProxyFactory``는 매개변수로 전달받는 ProxyConfig를 구현한 ``AdvisedSupport`` 클래스를 통해 대상 클래스의 프록시를 생성합니다.
+
+![proxy-factory](/assets/img/spring/core/aop/proxy-factory.png)
+
+위와 같은 기능들을 제공해주기 위해 스프링은 ``org.springframework.aop.framework.ProxyFactory``를 제공하며 구성 가능한(configurable) AopProxyFactory에 대한 편리한 액세스를 제공하는 ``ProxyCreatorSupport``가 프록시 객체를 생성하고 실제 ProxyChain을 받아옵니다. 
+
+### 동작 방식
+
+먼저 동작 방식을 확인하기 위해 프록시 대상 클래스인 인터페이스를 구현한 ``SampleService``클래스를 생성합니다.
+
+![sample-service](/assets/img/spring/core/aop/sample-service.png)
+
+그 후 대상 클래스에 적용될 Advisor를 AopFactory에 설정합니다. 
+
+![sample-service-test](/assets/img/spring/core/aop/sample-service-test.png)  
+
+위와 같이 설정을 완료 한 후 코드를 실행하여 ProxyFactory에서 어떤 식으로 프록시를 생성하며 사용하는지 확인해보겠습니다. 
+
+먼저 ProxyFactory 객체를 생성하면서 대상 객체를 등록합니다. 
+
+![proxy-factory-construct](/assets/img/spring/core/aop/proxy-factory-construct.png)
+
+두번째로 Advisor를 등록합니다. Advisor는 Pointcut과 Advice가 저장되어 있는 객체로 한쌍으로 이루어져있습니다. 
+또한 ProxyFactory는 내부적으로 Advisor를 리스트로 관리합니다. 
+즉 복수개의 Advisor를 등록할 수 있으며 등록한 순서대로 Advisor를 처리합니다. 
+
+![add-advisor](/assets/img/spring/core/aop/add-advisor.png) 
+
+설정 및 생성이 끝났다면 ProxyFactory는  ``getProxy()`` 메소드를 통해 설정에 따라 새로운 프록시를 생성합니다. 
+
+![get-proxy](/assets/img/spring/core/aop/get-proxy.png)  
+
+``getProxy()`` 메소드를 호출하게 되면 먼저 ``AdvisedSupport`` 설정 클래스를 통해 AopProxy를 생성하게 됩니다. 
+``AdvisedSupport``에 설정된 내용을 통해서 ``createAopProxy()``는 JDK Dynamic Proxy 또는 CGLIB Proxy 2가지 타입 중 저걸한 프록시를 생성하여 반환합니다. 
+
+![create-aop-proxy](/assets/img/spring/core/aop/create-aop-proxy.png)  
+
+### @EnableAspectJAutoProxy
+
+
+### 동작 방식
+
 
 
 
